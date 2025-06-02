@@ -7,7 +7,62 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (user *Model) ValidateNewUser() error {
+func ValidateCreatePassword(password string) (string, error) {
+	err := isStrongPassword(password)
+	if err != nil {
+		return "", ErrWeakPassword
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hash), nil
+}
+
+func ValidateUpdatePassword(userPassword, newPassword string) (string, error) {
+	err := isStrongPassword(newPassword)
+	if err != nil {
+		return "", ErrWeakPassword
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+
+	if userPassword == string(hash) {
+		return "", ErrSamePassword
+	}
+
+	return string(hash), nil
+}
+
+func ValidateUpdateEmail(userEmail, newEmail string) error {
+	if userEmail == newEmail {
+		return ErrSameEmail
+	}
+
+	if !isValidEmail(newEmail) {
+		return ErrInvalidEmail
+	}
+
+	return nil
+}
+
+func ValidateUpdateName(userName, newName string) error {
+	if userName == newName {
+		return ErrSameName
+	}
+
+	if newName == "" {
+		return ErrNameRequired
+	}
+
+	return nil
+}
+
+func (user *Model) ValidateCreateUser() error {
 	if user.ID.String() == "" {
 		return ErrInvalidID
 	}
@@ -24,14 +79,6 @@ func (user *Model) ValidateNewUser() error {
 		return ErrInvalidEmail
 	}
 
-	if user.Password == "" {
-		return ErrPasswordRequired
-	}
-
-	if !isStrongPassword(user.Password) {
-		return ErrWeakPassword
-	}
-
 	return nil
 }
 
@@ -45,9 +92,12 @@ func isValidEmail(email string) bool {
 	return emailRegex.MatchString(email)
 }
 
-func isStrongPassword(password string) bool {
+func isStrongPassword(password string) error {
+	if password == "" {
+		return ErrPasswordRequired
+	}
 	if len(password) < 8 {
-		return false
+		return ErrWeakPassword
 	}
 
 	var hasUpper, hasLower, hasNumber, hasSpecial bool
@@ -65,5 +115,9 @@ func isStrongPassword(password string) bool {
 		}
 	}
 
-	return hasUpper && hasLower && hasNumber && hasSpecial
+	if !hasUpper || !hasLower || !hasNumber || !hasSpecial {
+		return ErrWeakPassword
+	}
+
+	return nil
 }

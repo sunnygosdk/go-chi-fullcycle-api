@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -8,7 +9,13 @@ import (
 )
 
 func TestNewUser(t *testing.T) {
-	user, err := New("John Doe", "john.doe@example.com", "Test@123")
+	createOptions := CreateUserOptions{
+		Name:     "John Doe",
+		Email:    "john.doe@example.com",
+		Password: "Test@123",
+	}
+	user, err := ToCreate(createOptions)
+	fmt.Println(user)
 	assert.Nil(t, err, "NewUser should return no error")
 	assert.NotNil(t, user, "NewUser should return a valid user")
 	assert.Equal(t, "John Doe", user.Name, "Name should be John Doe")
@@ -18,7 +25,12 @@ func TestNewUser(t *testing.T) {
 }
 
 func TestUserValidatePassword(t *testing.T) {
-	user, err := New("John Doe", "john.doe@example.com", "Test@123")
+	createOptions := CreateUserOptions{
+		Name:     "John Doe",
+		Email:    "john.doe@example.com",
+		Password: "Test@123",
+	}
+	user, err := ToCreate(createOptions)
 	assert.Nil(t, err, "NewUser should return no error")
 	assert.NotNil(t, user, "NewUser should return a valid user")
 	assert.True(t, user.ValidatePassword("Test@123"), "Password should be valid if it matches")
@@ -34,7 +46,7 @@ func TestValidateNewUser(t *testing.T) {
 		Password: "Test@123",
 	}
 
-	err := user.ValidateNewUser()
+	err := user.ValidateCreateUser()
 	assert.Nil(t, err, "ValidateNewUser should return no error")
 }
 
@@ -46,7 +58,7 @@ func TestValidateNameIsRequired(t *testing.T) {
 		Password: "Test@123",
 	}
 
-	err := user.ValidateNewUser()
+	err := user.ValidateCreateUser()
 	assert.Error(t, err, ErrNameRequired)
 }
 
@@ -58,7 +70,7 @@ func TestValidateEmailIsRequired(t *testing.T) {
 		Password: "Test@123",
 	}
 
-	err := user.ValidateNewUser()
+	err := user.ValidateCreateUser()
 	assert.Error(t, err, ErrEmailRequired)
 }
 
@@ -70,7 +82,7 @@ func TestValidateInvalidEmail(t *testing.T) {
 		Password: "Test@123",
 	}
 
-	err := user.ValidateNewUser()
+	err := user.ValidateCreateUser()
 	assert.Error(t, err, ErrInvalidEmail)
 }
 
@@ -82,7 +94,7 @@ func TestValidatePasswordIsRequired(t *testing.T) {
 		Password: "",
 	}
 
-	err := user.ValidateNewUser()
+	err := user.ValidateCreateUser()
 	assert.Error(t, err, ErrPasswordRequired)
 }
 
@@ -94,6 +106,6 @@ func TestValidateWeakPassword(t *testing.T) {
 		Password: "test",
 	}
 
-	err := user.ValidateNewUser()
+	err := user.ValidateCreateUser()
 	assert.Error(t, err, ErrWeakPassword)
 }

@@ -29,7 +29,8 @@ func createTestTables(db *sql.DB) {
 		name TEXT,
 		email TEXT,
 		password TEXT,
-		created_at DATETIME
+		created_at DATETIME,
+		updated_at DATETIME
 	);
 	`
 	_, err := db.Exec(schema)
