@@ -68,3 +68,13 @@ func NewConfig() *conf {
 func (c *conf) GetEnvironment() string {
 	return strings.ToUpper(c.environment)
 }
+
+// GetConnectionInfo returns the database connection info.
+// The first value is a boolean that indicates if the connection is for test.
+// The second value is the connection string.
+func (c *conf) GetConnectionInfo() (bool, string) {
+	if c.GetEnvironment() == "TEST" {
+		return true, "file::memory:"
+	}
+	return false, fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true&multiStatements=true", c.dbUser, c.dbPassword, c.dbHost, c.dbPort, c.dbName)
+}
