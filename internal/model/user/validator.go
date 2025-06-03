@@ -20,15 +20,10 @@ func ValidateCreatePassword(password string) (string, error) {
 	return string(hash), nil
 }
 
-func ValidateUpdatePassword(userPassword, newPassword string) (string, error) {
+func ValidateUpdatePassword(newPassword string) (string, error) {
 	err := isStrongPassword(newPassword)
 	if err != nil {
 		return "", ErrWeakPassword
-	}
-
-	err = bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(newPassword))
-	if err == nil {
-		return "", ErrSamePassword
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
@@ -39,11 +34,7 @@ func ValidateUpdatePassword(userPassword, newPassword string) (string, error) {
 	return string(hash), nil
 }
 
-func ValidateUpdateEmail(userEmail, newEmail string) error {
-	if userEmail == newEmail {
-		return ErrSameEmail
-	}
-
+func ValidateUpdateEmail(newEmail string) error {
 	if !isValidEmail(newEmail) {
 		return ErrInvalidEmail
 	}
@@ -51,11 +42,7 @@ func ValidateUpdateEmail(userEmail, newEmail string) error {
 	return nil
 }
 
-func ValidateUpdateName(userName, newName string) error {
-	if userName == newName {
-		return ErrSameName
-	}
-
+func ValidateUpdateName(newName string) error {
 	if newName == "" {
 		return ErrNameRequired
 	}

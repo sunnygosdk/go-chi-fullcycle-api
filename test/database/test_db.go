@@ -19,15 +19,16 @@ func createTestTables(db *sql.DB) {
 	schema := `
 	CREATE TABLE products (
 		id TEXT PRIMARY KEY,
-		name TEXT,
+		name TEXT UNIQUE,
 		price REAL,
-		created_at DATETIME
+		created_at DATETIME,
+		updated_at DATETIME
 	);
 
 	CREATE TABLE users (
 		id TEXT PRIMARY KEY,
 		name TEXT,
-		email TEXT,
+		email TEXT UNIQUE,
 		password TEXT,
 		created_at DATETIME,
 		updated_at DATETIME
