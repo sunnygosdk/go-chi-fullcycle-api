@@ -9,18 +9,19 @@ import (
 	"github.com/sunnygosdk/go-chi-fullcycle-api/test/database"
 )
 
-func configureDB() (*sql.DB, error) {
-	config := NewConfig()
-	test, dsn := config.GetConnectionInfo()
+func (c *conf) configureDB() (*sql.DB, error) {
+	test, dsn := c.GetConnectionInfo()
 	if test {
+		log.Println("Connecting to SQLite Test Database...")
 		return database.SetupTestDB(), nil
 	}
 
+	log.Println("Connecting to MySQL Database...")
 	return sql.Open("mysql", dsn)
 }
 
-func ConnectDB() (*sql.DB, error) {
-	db, err := configureDB()
+func (c *conf) ConnectDB() (*sql.DB, error) {
+	db, err := c.configureDB()
 	if err != nil {
 		return nil, err
 	}
@@ -30,6 +31,6 @@ func ConnectDB() (*sql.DB, error) {
 		return nil, err
 	}
 
-	log.Println("Database connected")
+	log.Println("Database Connected")
 	return db, nil
 }
