@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/model/product"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/helper"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/test/database"
 )
 
@@ -14,11 +15,15 @@ func TestCreateProduct(t *testing.T) {
 
 	productRepo := NewRepository(db)
 
-	product, _ := product.New("Product", 10.0)
+	product, _ := product.ToCreate(
+		product.CreateProductDTO{
+			Name:  "Product",
+			Price: 10.0,
+		})
 
 	err := productRepo.Create(product)
-	assert.NotNil(t, product)
-	assert.NoError(t, err)
+	assert.NotNil(t, product, "Create should return a valid product")
+	assert.NoError(t, err, "Create should return no error")
 }
 
 func TestGetProducts(t *testing.T) {
@@ -27,15 +32,118 @@ func TestGetProducts(t *testing.T) {
 
 	productRepo := NewRepository(db)
 
-	product, _ := product.New("Product", 10.0)
+	product, _ := product.ToCreate(
+		product.CreateProductDTO{
+			Name:  "Product",
+			Price: 10.0,
+		})
 
 	err := productRepo.Create(product)
-	assert.NotNil(t, product)
-	assert.NoError(t, err)
+	assert.NotNil(t, product, "Create should return a valid product")
+	assert.NoError(t, err, "Create should return no error")
 
 	products, err := productRepo.GetProducts()
-	assert.Equal(t, product.Name, products[0].Name)
-	assert.Equal(t, product.Price, products[0].Price)
-	assert.NoError(t, err)
-	assert.Len(t, products, 1)
+	assert.Equal(t, product.Name, products[0].Name, "GetProducts should return the correct product name")
+	assert.Equal(t, product.Price, products[0].Price, "GetProducts should return the correct product price")
+	assert.NoError(t, err, "GetProducts should return no error")
+	assert.Len(t, products, 1, "GetProducts should return 1 product")
+}
+
+func TestGetProductByID(t *testing.T) {
+	db := database.SetupTestDB()
+	defer db.Close()
+
+	productRepo := NewRepository(db)
+
+	product, _ := product.ToCreate(
+		product.CreateProductDTO{
+			Name:  "Product",
+			Price: 10.0,
+		})
+
+	err := productRepo.Create(product)
+	assert.NotNil(t, product, "Create should return a valid product")
+	assert.NoError(t, err, "Create should return no error")
+
+	productByID, err := productRepo.GetProductByID(product.ID)
+	assert.Equal(t, product.Name, productByID.Name, "GetProductByID should return the correct product name")
+	assert.Equal(t, product.Price, productByID.Price, "GetProductByID should return the correct product price")
+	assert.NoError(t, err, "GetProductByID should return no error")
+}
+
+func TestGetProductByName(t *testing.T) {
+	db := database.SetupTestDB()
+	defer db.Close()
+
+	productRepo := NewRepository(db)
+
+	product, _ := product.ToCreate(
+		product.CreateProductDTO{
+			Name:  "Product",
+			Price: 10.0,
+		})
+
+	err := productRepo.Create(product)
+	assert.NotNil(t, product, "Create should return a valid product")
+	assert.NoError(t, err, "Create should return no error")
+
+	productByName, err := productRepo.GetProductByName(product.Name)
+	assert.Equal(t, product.Name, productByName.Name, "GetProductByName should return the correct product name")
+	assert.Equal(t, product.Price, productByName.Price, "GetProductByName should return the correct product price")
+	assert.NoError(t, err, "GetProductByName should return no error")
+}
+
+func TestUpdateProduct(t *testing.T) {
+	db := database.SetupTestDB()
+	defer db.Close()
+
+	productRepo := NewRepository(db)
+
+	productCreated, _ := product.ToCreate(
+		product.CreateProductDTO{
+			Name:  "Product",
+			Price: 10.0,
+		})
+
+	err := productRepo.Create(productCreated)
+	assert.NotNil(t, productCreated, "Create should return a valid product")
+	assert.NoError(t, err, "Create should return no error")
+
+	productToUpdate, _ := productCreated.ToUpdate(
+		product.UpdateProductDTO{
+			Name:  helper.StrPtr("Product Updated"),
+			Price: helper.Float64Ptr(20),
+		})
+
+	err = productRepo.Update(productCreated.ID, productToUpdate)
+	assert.NoError(t, err, "Update should return no error")
+
+	productUpdated, err := productRepo.GetProductByID(productCreated.ID)
+	assert.Equal(t, productToUpdate.Name, productUpdated.Name, "Update should update the product name")
+	assert.Equal(t, productToUpdate.Price, productUpdated.Price, "Update should update the product price")
+	assert.NoError(t, err, "Update should return no error")
+}
+
+func TestDeleteProduct(t *testing.T) {
+	db := database.SetupTestDB()
+	defer db.Close()
+
+	productRepo := NewRepository(db)
+
+	productCreated, _ := product.ToCreate(
+		product.CreateProductDTO{
+			Name:  "Product",
+			Price: 10.0,
+		})
+
+	err := productRepo.Create(productCreated)
+	assert.NotNil(t, productCreated, "Create should return a valid product")
+	assert.NoError(t, err, "Create should return no error")
+
+	err = productRepo.Delete(productCreated.ID)
+	assert.NoError(t, err, "Delete should return no error")
+
+	productDeleted, err := productRepo.GetProductByID(productCreated.ID)
+	assert.Nil(t, productDeleted, "Delete should delete the product")
+	assert.Error(t, err, "Delete should return error")
 }

@@ -20,7 +20,7 @@ func ValidateCreatePassword(password string) (string, error) {
 	return string(hash), nil
 }
 
-func ValidateUpdatePassword(userPassword, newPassword string) (string, error) {
+func ValidateUpdatePassword(newPassword string) (string, error) {
 	err := isStrongPassword(newPassword)
 	if err != nil {
 		return "", ErrWeakPassword
@@ -34,7 +34,7 @@ func ValidateUpdatePassword(userPassword, newPassword string) (string, error) {
 	return string(hash), nil
 }
 
-func ValidateUpdateEmail(userEmail, newEmail string) error {
+func ValidateUpdateEmail(newEmail string) error {
 	if !isValidEmail(newEmail) {
 		return ErrInvalidEmail
 	}
@@ -42,7 +42,7 @@ func ValidateUpdateEmail(userEmail, newEmail string) error {
 	return nil
 }
 
-func ValidateUpdateName(userName, newName string) error {
+func ValidateUpdateName(newName string) error {
 	if newName == "" {
 		return ErrNameRequired
 	}

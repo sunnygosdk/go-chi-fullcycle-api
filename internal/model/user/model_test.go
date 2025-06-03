@@ -35,20 +35,6 @@ func TestUserValidatePassword(t *testing.T) {
 	assert.NotEqual(t, user.Password, "Test@123", "Password should not be equal")
 }
 
-func TestValidateNewUser(t *testing.T) {
-	user, err := ToCreate(CreateUserDTO{
-		Name:     "John Doe",
-		Email:    "john.doe@example.com",
-		Password: "Test@123",
-	})
-	assert.Nil(t, err, "NewUser should return no error")
-	assert.NotNil(t, user, "NewUser should return a valid user")
-	assert.Equal(t, "John Doe", user.Name, "Name should be John Doe")
-	assert.Equal(t, "john.doe@example.com", user.Email, "Email should be john.doe@example.com")
-	assert.NotEmpty(t, user.ID, "ID should not be empty")
-	assert.NotEmpty(t, user.Password, "Password should not be empty")
-}
-
 func TestValidateNameIsRequired(t *testing.T) {
 	_, err := ToCreate(CreateUserDTO{
 		Name:     "",

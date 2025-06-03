@@ -52,7 +52,7 @@ func ToCreate(userDTO CreateUserDTO) (*Model, error) {
 
 func (user *Model) ToUpdate(userDTO UpdateUserDTO) (*Model, error) {
 	if userDTO.Password != nil {
-		hash, err := ValidateUpdatePassword(user.Password, *userDTO.Password)
+		hash, err := ValidateUpdatePassword(*userDTO.Password)
 		if err != nil {
 			return nil, err
 		}
@@ -61,7 +61,7 @@ func (user *Model) ToUpdate(userDTO UpdateUserDTO) (*Model, error) {
 	}
 
 	if userDTO.Name != nil {
-		err := ValidateUpdateName(user.Name, *userDTO.Name)
+		err := ValidateUpdateName(*userDTO.Name)
 		if err != nil {
 			return nil, err
 		}
@@ -70,7 +70,7 @@ func (user *Model) ToUpdate(userDTO UpdateUserDTO) (*Model, error) {
 	}
 
 	if userDTO.Email != nil {
-		err := ValidateUpdateEmail(user.Email, *userDTO.Email)
+		err := ValidateUpdateEmail(*userDTO.Email)
 		if err != nil {
 			return nil, err
 		}

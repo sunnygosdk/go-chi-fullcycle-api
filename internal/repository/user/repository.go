@@ -65,7 +65,7 @@ func (r *Repository) Create(user *user.Model) error {
 
 func (r *Repository) Update(id entity.ID, user *user.Model) error {
 	query := "UPDATE users SET name = ?, email = ?, password = ?, updated_at = ? WHERE id = ?"
-	_, err := r.db.Exec(query, user.Name, user.Email, user.Password, user.UpdatedAt, id)
+	_, err := r.db.Exec(query, user.Name, user.Email, user.Password, user.UpdatedAt, id.String())
 	if err != nil {
 		return err
 	}
@@ -74,7 +74,7 @@ func (r *Repository) Update(id entity.ID, user *user.Model) error {
 
 func (r *Repository) Delete(id entity.ID) error {
 	query := "DELETE FROM users WHERE id = ?"
-	_, err := r.db.Exec(query, id)
+	_, err := r.db.Exec(query, id.String())
 	if err != nil {
 		return err
 	}
