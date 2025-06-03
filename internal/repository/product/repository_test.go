@@ -1,6 +1,7 @@
 package product
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -42,11 +43,52 @@ func TestGetProducts(t *testing.T) {
 	assert.NotNil(t, product, "Create should return a valid product")
 	assert.NoError(t, err, "Create should return no error")
 
-	products, err := productRepo.GetProducts()
+	products, err := productRepo.GetProducts(1, 1)
 	assert.Equal(t, product.Name, products[0].Name, "GetProducts should return the correct product name")
 	assert.Equal(t, product.Price, products[0].Price, "GetProducts should return the correct product price")
 	assert.NoError(t, err, "GetProducts should return no error")
 	assert.Len(t, products, 1, "GetProducts should return 1 product")
+}
+
+func TestProductPagination(t *testing.T) {
+	db := database.SetupTestDB()
+	defer db.Close()
+
+	productRepo := NewRepository(db)
+
+	products := make([]product.Model, 0)
+	for i := range 50 {
+		product, _ := product.ToCreate(
+			product.CreateProductDTO{
+				Name:  fmt.Sprintf("Product-%d", i),
+				Price: 10.0,
+			})
+		products = append(products, *product)
+	}
+
+	err := productRepo.CreateBatch(products)
+	assert.NotNil(t, products, "CreateBatch should return a valid product")
+	assert.NoError(t, err, "CreateBatch should return no error")
+
+	products, err = productRepo.GetProducts(1, 1)
+	assert.Equal(t, "Product-0", products[0].Name, "GetProducts should return the correct product name")
+	assert.Equal(t, 10.0, products[0].Price, "GetProducts should return the correct product price")
+	assert.NoError(t, err, "GetProducts should return no error")
+	assert.Len(t, products, 1, "GetProducts should return 1 product")
+
+	products, err = productRepo.GetProducts(2, 1)
+	assert.Equal(t, "Product-1", products[0].Name, "GetProducts should return the correct product name")
+	assert.Equal(t, 10.0, products[0].Price, "GetProducts should return the correct product price")
+	assert.NoError(t, err, "GetProducts should return no error")
+	assert.Len(t, products, 1, "GetProducts should return 1 product")
+
+	totalProducts, err := productRepo.GetTotalProducts()
+	assert.NoError(t, err, "GetTotalProducts should return no error")
+	assert.Equal(t, 50, totalProducts, "GetTotalProducts should return 50 products")
+
+	totalPages, err := productRepo.GetTotalPages(10)
+	assert.NoError(t, err, "GetTotalPages should return no error")
+	assert.Equal(t, 5, totalPages, "GetTotalPages should return 5 pages")
 }
 
 func TestGetProductByID(t *testing.T) {

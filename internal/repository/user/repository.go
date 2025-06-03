@@ -15,9 +15,9 @@ func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) GetUsers() ([]user.Model, error) {
-	query := "SELECT id, name, email, password, created_at, updated_at FROM users"
-	rows, err := r.db.Query(query)
+func (r *Repository) GetUsers(page int, limit int) ([]user.Model, error) {
+	query := "SELECT id, name, email, password, created_at, updated_at FROM users LIMIT ? OFFSET ?"
+	rows, err := r.db.Query(query, limit, (page-1)*limit)
 	if err != nil {
 		return nil, err
 	}
@@ -54,11 +54,40 @@ func (r *Repository) GetUserByEmail(email string) (*user.Model, error) {
 	return &u, nil
 }
 
+func (r *Repository) GetTotalUsers() (int, error) {
+	query := "SELECT COUNT(*) FROM users"
+	row := r.db.QueryRow(query)
+	var count int
+	if err := row.Scan(&count); err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func (r *Repository) GetTotalPages(limit int) (int, error) {
+	totalUsers, err := r.GetTotalUsers()
+	if err != nil {
+		return 0, err
+	}
+	return (totalUsers + limit - 1) / limit, nil
+}
+
 func (r *Repository) Create(user *user.Model) error {
 	query := "INSERT INTO users (id, name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)"
 	_, err := r.db.Exec(query, user.ID, user.Name, user.Email, user.Password, user.CreatedAt, user.UpdatedAt)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (r *Repository) CreateBatch(users []user.Model) error {
+	query := "INSERT INTO users (id, name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)"
+	for _, user := range users {
+		_, err := r.db.Exec(query, user.ID, user.Name, user.Email, user.Password, user.CreatedAt, user.UpdatedAt)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
