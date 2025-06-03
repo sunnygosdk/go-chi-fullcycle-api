@@ -15,9 +15,9 @@ func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) GetProducts() ([]product.Model, error) {
-	query := "SELECT id, name, price, created_at FROM products"
-	rows, err := r.db.Query(query)
+func (r *Repository) GetProducts(page int, limit int) ([]product.Model, error) {
+	query := "SELECT id, name, price, created_at FROM products LIMIT ? OFFSET ?"
+	rows, err := r.db.Query(query, limit, (page-1)*limit)
 	if err != nil {
 		return nil, err
 	}
@@ -54,11 +54,40 @@ func (r *Repository) GetProductByName(name string) (*product.Model, error) {
 	return &p, nil
 }
 
+func (r *Repository) GetTotalProducts() (int, error) {
+	query := "SELECT COUNT(*) FROM products"
+	row := r.db.QueryRow(query)
+	var count int
+	if err := row.Scan(&count); err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func (r *Repository) GetTotalPages(limit int) (int, error) {
+	totalProducts, err := r.GetTotalProducts()
+	if err != nil {
+		return 0, err
+	}
+	return (totalProducts + limit - 1) / limit, nil
+}
+
 func (r *Repository) Create(product *product.Model) error {
 	query := "INSERT INTO products (id, name, price, created_at) VALUES (?, ?, ?, ?)"
 	_, err := r.db.Exec(query, product.ID, product.Name, product.Price, product.CreatedAt)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (r *Repository) CreateBatch(products []product.Model) error {
+	query := "INSERT INTO products (id, name, price, created_at) VALUES (?, ?, ?, ?)"
+	for _, product := range products {
+		_, err := r.db.Exec(query, product.ID, product.Name, product.Price, product.CreatedAt)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

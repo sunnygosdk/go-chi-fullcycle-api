@@ -1,13 +1,25 @@
 package app
 
 import (
-	"github.com/sunnygosdk/go-chi-fullcycle-api/configs"
+	"fmt"
+	"log"
+	"net/http"
+
+	"database/sql"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
-func StartServer() {
-	db, err := configs.ConnectDB()
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
+func StartServer(port string, db *sql.DB) {
+	r := chi.NewRouter()
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	SetupRoutes(r, db)
+
+	log.Println("Server Running on Port", port)
+	http.ListenAndServe(fmt.Sprintf(":%s", port), r)
+
 }
