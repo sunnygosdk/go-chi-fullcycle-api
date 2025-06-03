@@ -5,8 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/handler/controller/product"
-	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/handler/controller/utils"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/handler/controller"
 )
 
 func SetupRoutes(r chi.Router, db *sql.DB) {
@@ -15,11 +14,11 @@ func SetupRoutes(r chi.Router, db *sql.DB) {
 }
 
 func SetUtilsRoutes(r chi.Router, db *sql.DB) {
-	utilsController := utils.InjectController(db)
+	utilsController := controller.InjectUtilsController(db)
 	r.Get("/health", utilsController.HealthCheck)
 }
 
 func SetProductRoutes(r chi.Router, db *sql.DB) {
-	productController := product.InjectController(db)
+	productController := controller.InjectProductController(db)
 	r.Get("/products", productController.GetProducts)
 }

@@ -1,23 +1,24 @@
-package product
+package repository_test
 
 import (
 	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/model/product"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/database"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/model"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/repository"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/helper"
-	"github.com/sunnygosdk/go-chi-fullcycle-api/test/database"
 )
 
 func TestCreateProduct(t *testing.T) {
 	db := database.SetupTestDB()
 	defer db.Close()
 
-	productRepo := NewRepository(db)
+	productRepo := repository.NewProductRepository(db)
 
-	product, _ := product.ToCreate(
-		product.CreateProductDTO{
+	product, _ := model.ProductToCreate(
+		model.CreateProductDTO{
 			Name:  "Product",
 			Price: 10.0,
 		})
@@ -31,10 +32,10 @@ func TestGetProducts(t *testing.T) {
 	db := database.SetupTestDB()
 	defer db.Close()
 
-	productRepo := NewRepository(db)
+	productRepo := repository.NewProductRepository(db)
 
-	product, _ := product.ToCreate(
-		product.CreateProductDTO{
+	product, _ := model.ProductToCreate(
+		model.CreateProductDTO{
 			Name:  "Product",
 			Price: 10.0,
 		})
@@ -54,12 +55,12 @@ func TestProductPagination(t *testing.T) {
 	db := database.SetupTestDB()
 	defer db.Close()
 
-	productRepo := NewRepository(db)
+	productRepo := repository.NewProductRepository(db)
 
-	products := make([]product.Model, 0)
+	products := make([]model.ProductModel, 0)
 	for i := range 50 {
-		product, _ := product.ToCreate(
-			product.CreateProductDTO{
+		product, _ := model.ProductToCreate(
+			model.CreateProductDTO{
 				Name:  fmt.Sprintf("Product-%d", i),
 				Price: 10.0,
 			})
@@ -86,7 +87,7 @@ func TestProductPagination(t *testing.T) {
 	assert.NoError(t, err, "GetTotalProducts should return no error")
 	assert.Equal(t, 50, totalProducts, "GetTotalProducts should return 50 products")
 
-	totalPages, err := productRepo.GetTotalPages(10)
+	totalPages, err := productRepo.GetTotalProductPages(10)
 	assert.NoError(t, err, "GetTotalPages should return no error")
 	assert.Equal(t, 5, totalPages, "GetTotalPages should return 5 pages")
 }
@@ -95,10 +96,10 @@ func TestGetProductByID(t *testing.T) {
 	db := database.SetupTestDB()
 	defer db.Close()
 
-	productRepo := NewRepository(db)
+	productRepo := repository.NewProductRepository(db)
 
-	product, _ := product.ToCreate(
-		product.CreateProductDTO{
+	product, _ := model.ProductToCreate(
+		model.CreateProductDTO{
 			Name:  "Product",
 			Price: 10.0,
 		})
@@ -117,10 +118,10 @@ func TestGetProductByName(t *testing.T) {
 	db := database.SetupTestDB()
 	defer db.Close()
 
-	productRepo := NewRepository(db)
+	productRepo := repository.NewProductRepository(db)
 
-	product, _ := product.ToCreate(
-		product.CreateProductDTO{
+	product, _ := model.ProductToCreate(
+		model.CreateProductDTO{
 			Name:  "Product",
 			Price: 10.0,
 		})
@@ -139,10 +140,10 @@ func TestUpdateProduct(t *testing.T) {
 	db := database.SetupTestDB()
 	defer db.Close()
 
-	productRepo := NewRepository(db)
+	productRepo := repository.NewProductRepository(db)
 
-	productCreated, _ := product.ToCreate(
-		product.CreateProductDTO{
+	productCreated, _ := model.ProductToCreate(
+		model.CreateProductDTO{
 			Name:  "Product",
 			Price: 10.0,
 		})
@@ -151,8 +152,8 @@ func TestUpdateProduct(t *testing.T) {
 	assert.NotNil(t, productCreated, "Create should return a valid product")
 	assert.NoError(t, err, "Create should return no error")
 
-	productToUpdate, _ := productCreated.ToUpdate(
-		product.UpdateProductDTO{
+	productToUpdate, _ := productCreated.ProductToUpdate(
+		model.UpdateProductDTO{
 			Name:  helper.StrPtr("Product Updated"),
 			Price: helper.Float64Ptr(20),
 		})
@@ -170,10 +171,10 @@ func TestDeleteProduct(t *testing.T) {
 	db := database.SetupTestDB()
 	defer db.Close()
 
-	productRepo := NewRepository(db)
+	productRepo := repository.NewProductRepository(db)
 
-	productCreated, _ := product.ToCreate(
-		product.CreateProductDTO{
+	productCreated, _ := model.ProductToCreate(
+		model.CreateProductDTO{
 			Name:  "Product",
 			Price: 10.0,
 		})

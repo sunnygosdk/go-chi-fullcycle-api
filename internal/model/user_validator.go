@@ -1,4 +1,4 @@
-package user
+package model
 
 import (
 	"regexp"
@@ -42,21 +42,21 @@ func ValidateUpdateEmail(newEmail string) error {
 	return nil
 }
 
-func ValidateUpdateName(newName string) error {
+func ValidateUpdateUserName(newName string) error {
 	if newName == "" {
-		return ErrNameRequired
+		return ErrUserNameRequired
 	}
 
 	return nil
 }
 
-func (user *Model) ValidateCreateUser() error {
+func (user *UserModel) ValidateCreateUser() error {
 	if user.ID.String() == "" {
-		return ErrInvalidID
+		return ErrInvalidUserID
 	}
 
 	if user.Name == "" {
-		return ErrNameRequired
+		return ErrUserNameRequired
 	}
 
 	if user.Email == "" {
@@ -70,7 +70,7 @@ func (user *Model) ValidateCreateUser() error {
 	return nil
 }
 
-func (user *Model) ValidatePassword(password string) bool {
+func (user *UserModel) ValidatePassword(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	return err == nil
 }

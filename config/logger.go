@@ -1,4 +1,4 @@
-package configs
+package config
 
 import (
 	"context"
@@ -55,7 +55,7 @@ func Logger(ctx context.Context, level string, msg string, args ...any) {
 		parts := strings.Split(funcName, ".")
 		n := len(parts)
 		if n >= 3 {
-			funcName = fmt.Sprintf("Package: %s - Layer: %s - Function: %s", parts[n-3], parts[n-2], parts[n-1])
+			funcName = fmt.Sprintf("%s - Func: %s.%s", parts[n-3], parts[n-2], parts[n-1])
 		}
 	}
 
@@ -64,6 +64,6 @@ func Logger(ctx context.Context, level string, msg string, args ...any) {
 		requestID = "no-request-id"
 	}
 
-	logMsg := fmt.Sprintf("[%s - Request: %s - %s] %s", level, requestID, funcName, fmt.Sprintf(msg, args...))
+	logMsg := fmt.Sprintf("[%s - Req: %s - %s] %s", level, requestID, funcName, fmt.Sprintf(msg, args...))
 	log.Println(logMsg)
 }

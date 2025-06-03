@@ -1,23 +1,24 @@
-package user
+package repository_test
 
 import (
 	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/model/user"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/database"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/model"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/repository"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/helper"
-	"github.com/sunnygosdk/go-chi-fullcycle-api/test/database"
 )
 
 func TestCreateUser(t *testing.T) {
 	db := database.SetupTestDB()
 	defer db.Close()
 
-	userRepo := NewRepository(db)
+	userRepo := repository.NewUserRepository(db)
 
-	user, _ := user.ToCreate(
-		user.CreateUserDTO{
+	user, _ := model.UserToCreate(
+		model.CreateUserDTO{
 			Name:     "John Doe",
 			Email:    "john.doe@example.com",
 			Password: "Test@123",
@@ -35,10 +36,10 @@ func TestGetUsers(t *testing.T) {
 	db := database.SetupTestDB()
 	defer db.Close()
 
-	userRepo := NewRepository(db)
+	userRepo := repository.NewUserRepository(db)
 
-	user, _ := user.ToCreate(
-		user.CreateUserDTO{
+	user, _ := model.UserToCreate(
+		model.CreateUserDTO{
 			Name:     "John Doe",
 			Email:    "john.doe@example.com",
 			Password: "Test@123",
@@ -61,10 +62,10 @@ func TestGetUserByID(t *testing.T) {
 	db := database.SetupTestDB()
 	defer db.Close()
 
-	userRepo := NewRepository(db)
+	userRepo := repository.NewUserRepository(db)
 
-	user, _ := user.ToCreate(
-		user.CreateUserDTO{
+	user, _ := model.UserToCreate(
+		model.CreateUserDTO{
 			Name:     "John Doe",
 			Email:    "john.doe@example.com",
 			Password: "Test@123",
@@ -75,7 +76,7 @@ func TestGetUserByID(t *testing.T) {
 	assert.NotNil(t, user, "User should not be nil")
 	assert.NoError(t, err, "CreateUser should return no error")
 
-	userByID, err := userRepo.GetUserByID(user.ID.String())
+	userByID, err := userRepo.GetUserByID(user.ID)
 	assert.Equal(t, user.Name, userByID.Name, "Name should be John Doe")
 	assert.Equal(t, user.Email, userByID.Email, "Email should be john.doe@example.com")
 	assert.Equal(t, true, userByID.ValidatePassword("Test@123"), "Password should be valid if it matches")
@@ -86,10 +87,10 @@ func TestGetUserByEmail(t *testing.T) {
 	db := database.SetupTestDB()
 	defer db.Close()
 
-	userRepo := NewRepository(db)
+	userRepo := repository.NewUserRepository(db)
 
-	user, _ := user.ToCreate(
-		user.CreateUserDTO{
+	user, _ := model.UserToCreate(
+		model.CreateUserDTO{
 			Name:     "John Doe",
 			Email:    "john.doe@example.com",
 			Password: "Test@123",
@@ -111,12 +112,12 @@ func TestUserPagination(t *testing.T) {
 	db := database.SetupTestDB()
 	defer db.Close()
 
-	userRepo := NewRepository(db)
+	userRepo := repository.NewUserRepository(db)
 
-	users := make([]user.Model, 0)
+	users := make([]model.UserModel, 0)
 	for i := range 50 {
-		user, _ := user.ToCreate(
-			user.CreateUserDTO{
+		user, _ := model.UserToCreate(
+			model.CreateUserDTO{
 				Name:     fmt.Sprintf("User-%d", i),
 				Email:    fmt.Sprintf("user-%d@example.com", i),
 				Password: "Test@123",
@@ -153,10 +154,10 @@ func TestUpdateUser(t *testing.T) {
 	db := database.SetupTestDB()
 	defer db.Close()
 
-	userRepo := NewRepository(db)
+	userRepo := repository.NewUserRepository(db)
 
-	userCreated, _ := user.ToCreate(
-		user.CreateUserDTO{
+	userCreated, _ := model.UserToCreate(
+		model.CreateUserDTO{
 			Name:     "John Doe",
 			Email:    "john.doe@example.com",
 			Password: "Test@123",
@@ -167,8 +168,8 @@ func TestUpdateUser(t *testing.T) {
 	assert.NotNil(t, userCreated, "User should not be nil")
 	assert.NoError(t, err, "CreateUser should return no error")
 
-	userUpdate, _ := userCreated.ToUpdate(
-		user.UpdateUserDTO{
+	userUpdate, _ := userCreated.UserToUpdate(
+		model.UpdateUserDTO{
 			Name:     helper.StrPtr("John Doe Updated"),
 			Email:    helper.StrPtr("john.doe.updated@example.com"),
 			Password: helper.StrPtr("Test@1234"),
@@ -186,10 +187,10 @@ func TestDeleteUser(t *testing.T) {
 	db := database.SetupTestDB()
 	defer db.Close()
 
-	userRepo := NewRepository(db)
+	userRepo := repository.NewUserRepository(db)
 
-	userCreated, _ := user.ToCreate(
-		user.CreateUserDTO{
+	userCreated, _ := model.UserToCreate(
+		model.CreateUserDTO{
 			Name:     "John Doe",
 			Email:    "john.doe@example.com",
 			Password: "Test@123",
@@ -203,7 +204,7 @@ func TestDeleteUser(t *testing.T) {
 	err = userRepo.Delete(userCreated.ID)
 	assert.NoError(t, err, "DeleteUser should return no error")
 
-	userByID, err := userRepo.GetUserByID(userCreated.ID.String())
+	userByID, err := userRepo.GetUserByID(userCreated.ID)
 	assert.Error(t, err, "GetUserByID should return error")
 	assert.Nil(t, userByID, "User should be nil")
 }

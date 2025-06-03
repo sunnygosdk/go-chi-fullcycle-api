@@ -1,23 +1,23 @@
-package product
+package model
 
 import "github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
 
-func (product *Model) ValidateCreateProduct() error {
+func (product *ProductModel) ValidateCreateProduct() error {
 	if product.ID.String() == "" {
-		return ErrIDisRequired
+		return ErrProductIDisRequired
 	}
 
 	_, err := entity.ParseID(product.ID.String())
 	if err != nil {
-		return ErrInvalidID
+		return ErrInvalidProductID
 	}
 
 	if product.Name == "" {
-		return ErrNameRequired
+		return ErrProductNameRequired
 	}
 
 	if product.Price <= 0 {
-		return ErrPriceLessOrZero
+		return ErrProductPriceLessOrZero
 	}
 
 	return nil
@@ -25,7 +25,7 @@ func (product *Model) ValidateCreateProduct() error {
 
 func ValidateUpdateName(newName string) error {
 	if newName == "" {
-		return ErrNameRequired
+		return ErrProductNameRequired
 	}
 
 	return nil
@@ -33,7 +33,7 @@ func ValidateUpdateName(newName string) error {
 
 func ValidateUpdatePrice(price float64) error {
 	if price <= 0 {
-		return ErrPriceLessOrZero
+		return ErrProductPriceLessOrZero
 	}
 
 	return nil
