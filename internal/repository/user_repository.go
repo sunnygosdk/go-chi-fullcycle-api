@@ -1,21 +1,21 @@
-package user
+package repository
 
 import (
 	"database/sql"
 
-	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/model/user"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/model"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
 )
 
-type Repository struct {
+type UserRepository struct {
 	db *sql.DB
 }
 
-func NewRepository(db *sql.DB) *Repository {
-	return &Repository{db: db}
+func NewUserRepository(db *sql.DB) *UserRepository {
+	return &UserRepository{db: db}
 }
 
-func (r *Repository) GetUsers(page int, limit int) ([]user.Model, error) {
+func (r *UserRepository) GetUsers(page int, limit int) ([]model.UserModel, error) {
 	query := "SELECT id, name, email, password, created_at, updated_at FROM users LIMIT ? OFFSET ?"
 	rows, err := r.db.Query(query, limit, (page-1)*limit)
 	if err != nil {
@@ -23,9 +23,9 @@ func (r *Repository) GetUsers(page int, limit int) ([]user.Model, error) {
 	}
 	defer rows.Close()
 
-	var users []user.Model
+	var users []model.UserModel
 	for rows.Next() {
-		var u user.Model
+		var u model.UserModel
 		if err := rows.Scan(&u.ID, &u.Name, &u.Email, &u.Password, &u.CreatedAt, &u.UpdatedAt); err != nil {
 			return nil, err
 		}
@@ -34,27 +34,27 @@ func (r *Repository) GetUsers(page int, limit int) ([]user.Model, error) {
 	return users, nil
 }
 
-func (r *Repository) GetUserByID(id string) (*user.Model, error) {
+func (r *UserRepository) GetUserByID(id entity.ID) (*model.UserModel, error) {
 	query := "SELECT id, name, email, password, created_at, updated_at FROM users WHERE id = ?"
-	row := r.db.QueryRow(query, id)
-	var u user.Model
+	row := r.db.QueryRow(query, id.String())
+	var u model.UserModel
 	if err := row.Scan(&u.ID, &u.Name, &u.Email, &u.Password, &u.CreatedAt, &u.UpdatedAt); err != nil {
 		return nil, err
 	}
 	return &u, nil
 }
 
-func (r *Repository) GetUserByEmail(email string) (*user.Model, error) {
+func (r *UserRepository) GetUserByEmail(email string) (*model.UserModel, error) {
 	query := "SELECT id, name, email, password, created_at, updated_at FROM users WHERE email = ?"
 	row := r.db.QueryRow(query, email)
-	var u user.Model
+	var u model.UserModel
 	if err := row.Scan(&u.ID, &u.Name, &u.Email, &u.Password, &u.CreatedAt, &u.UpdatedAt); err != nil {
 		return nil, err
 	}
 	return &u, nil
 }
 
-func (r *Repository) GetTotalUsers() (int, error) {
+func (r *UserRepository) GetTotalUsers() (int, error) {
 	query := "SELECT COUNT(*) FROM users"
 	row := r.db.QueryRow(query)
 	var count int
@@ -64,7 +64,7 @@ func (r *Repository) GetTotalUsers() (int, error) {
 	return count, nil
 }
 
-func (r *Repository) GetTotalPages(limit int) (int, error) {
+func (r *UserRepository) GetTotalPages(limit int) (int, error) {
 	totalUsers, err := r.GetTotalUsers()
 	if err != nil {
 		return 0, err
@@ -72,7 +72,7 @@ func (r *Repository) GetTotalPages(limit int) (int, error) {
 	return (totalUsers + limit - 1) / limit, nil
 }
 
-func (r *Repository) Create(user *user.Model) error {
+func (r *UserRepository) Create(user *model.UserModel) error {
 	query := "INSERT INTO users (id, name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)"
 	_, err := r.db.Exec(query, user.ID, user.Name, user.Email, user.Password, user.CreatedAt, user.UpdatedAt)
 	if err != nil {
@@ -81,7 +81,7 @@ func (r *Repository) Create(user *user.Model) error {
 	return nil
 }
 
-func (r *Repository) CreateBatch(users []user.Model) error {
+func (r *UserRepository) CreateBatch(users []model.UserModel) error {
 	query := "INSERT INTO users (id, name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)"
 	for _, user := range users {
 		_, err := r.db.Exec(query, user.ID, user.Name, user.Email, user.Password, user.CreatedAt, user.UpdatedAt)
@@ -92,7 +92,7 @@ func (r *Repository) CreateBatch(users []user.Model) error {
 	return nil
 }
 
-func (r *Repository) Update(id entity.ID, user *user.Model) error {
+func (r *UserRepository) Update(id entity.ID, user *model.UserModel) error {
 	query := "UPDATE users SET name = ?, email = ?, password = ?, updated_at = ? WHERE id = ?"
 	_, err := r.db.Exec(query, user.Name, user.Email, user.Password, user.UpdatedAt, id.String())
 	if err != nil {
@@ -101,7 +101,7 @@ func (r *Repository) Update(id entity.ID, user *user.Model) error {
 	return nil
 }
 
-func (r *Repository) Delete(id entity.ID) error {
+func (r *UserRepository) Delete(id entity.ID) error {
 	query := "DELETE FROM users WHERE id = ?"
 	_, err := r.db.Exec(query, id.String())
 	if err != nil {

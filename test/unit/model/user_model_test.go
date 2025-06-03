@@ -1,14 +1,15 @@
-package user
+package model_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/model"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/helper"
 )
 
 func TestToCreateUser(t *testing.T) {
-	user, err := ToCreate(CreateUserDTO{
+	user, err := model.UserToCreate(model.CreateUserDTO{
 		Name:     "John Doe",
 		Email:    "john.doe@example.com",
 		Password: "Test@123",
@@ -23,7 +24,7 @@ func TestToCreateUser(t *testing.T) {
 }
 
 func TestUserValidatePassword(t *testing.T) {
-	user, err := ToCreate(CreateUserDTO{
+	user, err := model.UserToCreate(model.CreateUserDTO{
 		Name:     "John Doe",
 		Email:    "john.doe@example.com",
 		Password: "Test@123",
@@ -36,69 +37,69 @@ func TestUserValidatePassword(t *testing.T) {
 }
 
 func TestValidateNameIsRequired(t *testing.T) {
-	_, err := ToCreate(CreateUserDTO{
+	_, err := model.UserToCreate(model.CreateUserDTO{
 		Name:     "",
 		Email:    "john.doe@example.com",
 		Password: "Test@123",
 	})
 
-	assert.Error(t, err, ErrNameRequired, "ValidateNameIsRequired should return error")
+	assert.Error(t, err, model.ErrUserNameRequired, "ValidateNameIsRequired should return error")
 }
 
 func TestValidateEmailIsRequired(t *testing.T) {
-	_, err := ToCreate(CreateUserDTO{
+	_, err := model.UserToCreate(model.CreateUserDTO{
 		Name:     "John Doe",
 		Email:    "",
 		Password: "Test@123",
 	})
 
-	assert.Error(t, err, ErrEmailRequired, "ValidateEmailIsRequired should return error")
+	assert.Error(t, err, model.ErrEmailRequired, "ValidateEmailIsRequired should return error")
 }
 
 func TestValidateInvalidEmail(t *testing.T) {
-	_, err := ToCreate(CreateUserDTO{
+	_, err := model.UserToCreate(model.CreateUserDTO{
 		Name:     "John Doe",
 		Email:    "john.doeexample.com",
 		Password: "Test@123",
 	})
 
-	assert.Error(t, err, ErrInvalidEmail, "ValidateInvalidEmail should return error")
+	assert.Error(t, err, model.ErrInvalidEmail, "ValidateInvalidEmail should return error")
 }
 
 func TestValidatePasswordIsRequired(t *testing.T) {
-	_, err := ToCreate(CreateUserDTO{
+	_, err := model.UserToCreate(model.CreateUserDTO{
 		Name:     "John Doe",
 		Email:    "john.doe@example.com",
 		Password: "",
 	})
 
-	assert.Error(t, err, ErrPasswordRequired, "ValidatePasswordIsRequired should return error")
+	assert.Error(t, err, model.ErrPasswordRequired, "ValidatePasswordIsRequired should return error")
 }
 
 func TestValidateWeakPassword(t *testing.T) {
-	_, err := ToCreate(CreateUserDTO{
+	_, err := model.UserToCreate(model.CreateUserDTO{
 		Name:     "John Doe",
 		Email:    "john.doe@example.com",
 		Password: "test",
 	})
 
-	assert.Error(t, err, ErrWeakPassword, "ValidateWeakPassword should return error")
+	assert.Error(t, err, model.ErrWeakPassword, "ValidateWeakPassword should return error")
 }
 
 func TestToUpdateUser(t *testing.T) {
-	user, _ := ToCreate(CreateUserDTO{
+	user, _ := model.UserToCreate(model.CreateUserDTO{
 		Name:     "John Doe",
 		Email:    "john.doe@example.com",
 		Password: "Test@123",
 	})
 
-	updateOptions := UpdateUserDTO{
+	updateOptions := model.UpdateUserDTO{
 		Name:     helper.StrPtr("John Doe Updated"),
 		Email:    helper.StrPtr("john.doe.updated@example.com"),
 		Password: helper.StrPtr("Test@1234"),
 	}
 
-	user, err := user.ToUpdate(updateOptions)
+	user, err := user.UserToUpdate(updateOptions)
 	assert.Nil(t, err, "ValidateNewUser should return no error")
 	assert.Equal(t, "John Doe Updated", user.Name, "Name should be John Doe Updated")
 	assert.Equal(t, "john.doe.updated@example.com", user.Email, "Email should be john.doe.updated@example.com")
@@ -106,19 +107,19 @@ func TestToUpdateUser(t *testing.T) {
 }
 
 func TestValidateUpdateName(t *testing.T) {
-	user, _ := ToCreate(CreateUserDTO{
+	user, _ := model.UserToCreate(model.CreateUserDTO{
 		Name:     "John Doe",
 		Email:    "john.doe@example.com",
 		Password: "Test@123",
 	})
 
-	userDTO := UpdateUserDTO{
+	userDTO := model.UpdateUserDTO{
 		Name:     helper.StrPtr("John Doe Updated"),
 		Email:    nil,
 		Password: nil,
 	}
 
-	user, err := user.ToUpdate(userDTO)
+	user, err := user.UserToUpdate(userDTO)
 	assert.Nil(t, err, "ValidateUpdateName should return no error")
 	assert.Equal(t, "John Doe Updated", user.Name, "Name should be John Doe Updated")
 	assert.Equal(t, "john.doe@example.com", user.Email, "Email should be john.doe@example.com")
@@ -126,19 +127,19 @@ func TestValidateUpdateName(t *testing.T) {
 }
 
 func TestValidateUpdateEmail(t *testing.T) {
-	user, _ := ToCreate(CreateUserDTO{
+	user, _ := model.UserToCreate(model.CreateUserDTO{
 		Name:     "John Doe",
 		Email:    "john.doe@example.com",
 		Password: "Test@123",
 	})
 
-	userDTO := UpdateUserDTO{
+	userDTO := model.UpdateUserDTO{
 		Name:     nil,
 		Email:    helper.StrPtr("john.doe.updated@example.com"),
 		Password: nil,
 	}
 
-	user, err := user.ToUpdate(userDTO)
+	user, err := user.UserToUpdate(userDTO)
 	assert.Nil(t, err, "ValidateUpdateEmail should return no error")
 	assert.Equal(t, "john.doe.updated@example.com", user.Email, "Email should be john.doe.updated@example.com")
 	assert.Equal(t, "John Doe", user.Name, "Name should be John Doe")
@@ -146,28 +147,28 @@ func TestValidateUpdateEmail(t *testing.T) {
 }
 
 func TestValidateUpdatePassword(t *testing.T) {
-	user, _ := ToCreate(CreateUserDTO{
+	user, _ := model.UserToCreate(model.CreateUserDTO{
 		Name:     "John Doe",
 		Email:    "john.doe@example.com",
 		Password: "Test@123",
 	})
 
-	userDTO := UpdateUserDTO{
+	userDTO := model.UpdateUserDTO{
 		Name:     nil,
 		Email:    nil,
 		Password: helper.StrPtr("teste"),
 	}
 
-	_, err := user.ToUpdate(userDTO)
-	assert.Equal(t, ErrWeakPassword, err, "ValidateUpdatePassword should return ErrWeakPassword")
+	_, err := user.UserToUpdate(userDTO)
+	assert.Equal(t, model.ErrWeakPassword, err, "ValidateUpdatePassword should return ErrWeakPassword")
 
-	userDTO2 := UpdateUserDTO{
+	userDTO2 := model.UpdateUserDTO{
 		Name:     nil,
 		Email:    nil,
 		Password: helper.StrPtr("Test@1234"),
 	}
 
-	user, err = user.ToUpdate(userDTO2)
+	user, err = user.UserToUpdate(userDTO2)
 	assert.Nil(t, err, "ValidateUpdatePassword should return no error")
 	assert.Equal(t, user.ValidatePassword("Test@1234"), true, "Password should be valid if it matches")
 	assert.Equal(t, "John Doe", user.Name, "Name should be John Doe")

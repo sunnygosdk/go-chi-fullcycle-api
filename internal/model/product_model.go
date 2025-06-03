@@ -1,4 +1,4 @@
-package product
+package model
 
 import (
 	"time"
@@ -6,7 +6,7 @@ import (
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
 )
 
-type Model struct {
+type ProductModel struct {
 	ID        entity.ID `json:"id"`
 	Name      string    `json:"name"`
 	Price     float64   `json:"price"`
@@ -24,8 +24,8 @@ type UpdateProductDTO struct {
 	Price *float64 `json:"price"`
 }
 
-func ToCreate(productDTO CreateProductDTO) (*Model, error) {
-	product := &Model{
+func ProductToCreate(productDTO CreateProductDTO) (*ProductModel, error) {
+	product := &ProductModel{
 		ID:        entity.NewID(),
 		Name:      productDTO.Name,
 		Price:     productDTO.Price,
@@ -41,7 +41,7 @@ func ToCreate(productDTO CreateProductDTO) (*Model, error) {
 	return product, nil
 }
 
-func (product *Model) ToUpdate(productDTO UpdateProductDTO) (*Model, error) {
+func (product *ProductModel) ProductToUpdate(productDTO UpdateProductDTO) (*ProductModel, error) {
 	if productDTO.Name != nil {
 		err := ValidateUpdateName(*productDTO.Name)
 		if err != nil {

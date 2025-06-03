@@ -1,4 +1,4 @@
-package utils
+package controller
 
 import (
 	"context"
@@ -25,7 +25,7 @@ var (
 	}
 )
 
-func WriteResponse(ctx context.Context, w http.ResponseWriter, status int, response Response) {
+func WriteUtilsResponse(ctx context.Context, w http.ResponseWriter, status int, response Response) {
 	requestID := middleware.GetReqID(ctx)
 	if requestID != "" {
 		w.Header().Set("X-Request-ID", requestID)

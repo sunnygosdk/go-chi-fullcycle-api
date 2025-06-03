@@ -1,4 +1,4 @@
-package user
+package model
 
 import (
 	"time"
@@ -6,7 +6,7 @@ import (
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
 )
 
-type Model struct {
+type UserModel struct {
 	ID        entity.ID `json:"id"`
 	Name      string    `json:"name"`
 	Email     string    `json:"email"`
@@ -27,13 +27,13 @@ type UpdateUserDTO struct {
 	Password *string `json:"password,omitempty"`
 }
 
-func ToCreate(userDTO CreateUserDTO) (*Model, error) {
+func UserToCreate(userDTO CreateUserDTO) (*UserModel, error) {
 	hash, err := ValidateCreatePassword(userDTO.Password)
 	if err != nil {
 		return nil, err
 	}
 
-	user := &Model{
+	user := &UserModel{
 		ID:        entity.NewID(),
 		Name:      userDTO.Name,
 		Email:     userDTO.Email,
@@ -50,7 +50,7 @@ func ToCreate(userDTO CreateUserDTO) (*Model, error) {
 	return user, nil
 }
 
-func (user *Model) ToUpdate(userDTO UpdateUserDTO) (*Model, error) {
+func (user *UserModel) UserToUpdate(userDTO UpdateUserDTO) (*UserModel, error) {
 	if userDTO.Password != nil {
 		hash, err := ValidateUpdatePassword(*userDTO.Password)
 		if err != nil {
@@ -61,7 +61,7 @@ func (user *Model) ToUpdate(userDTO UpdateUserDTO) (*Model, error) {
 	}
 
 	if userDTO.Name != nil {
-		err := ValidateUpdateName(*userDTO.Name)
+		err := ValidateUpdateUserName(*userDTO.Name)
 		if err != nil {
 			return nil, err
 		}

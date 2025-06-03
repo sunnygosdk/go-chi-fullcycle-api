@@ -1,4 +1,4 @@
-package configs
+package config
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-type conf struct {
+type Config struct {
 	dbDriver      string
 	dbUser        string
 	dbPassword    string
@@ -22,18 +22,14 @@ type conf struct {
 	tokenAuth     *jwtauth.JWTAuth
 }
 
-var config *conf
-
-// init config.
-// It will read the .env file and set the config.
-func init() {
+func LoadConfig() *Config {
 	viper.SetConfigFile(".env")
 	viper.AddConfigPath(".")
 	viper.AutomaticEnv()
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		panic(fmt.Errorf("config file read error: %w", err))
+		panic(fmt.Errorf("config error: %w", err))
 	}
 
 	required := []string{"DB_PASSWORD", "JWT_SECRET"}
@@ -43,7 +39,7 @@ func init() {
 		}
 	}
 
-	config = &conf{
+	return &Config{
 		dbDriver:      viper.GetString("DB_DRIVER"),
 		dbUser:        viper.GetString("DB_USER"),
 		dbPassword:    viper.GetString("DB_PASSWORD"),
@@ -58,21 +54,10 @@ func init() {
 	}
 }
 
-// NewConfig returns the config.
-func NewConfig() *conf {
-	return config
-}
-
-// GetEnvironment returns the environment.
-// The environment can be DEV or PROD.
-func (c *conf) GetEnvironment() string {
-	return strings.ToUpper(c.environment)
-}
-
 // GetConnectionInfo returns the database connection info.
 // The first value is a boolean that indicates if the connection is for test.
 // The second value is the connection string.
-func (c *conf) GetConnectionInfo() (bool, string) {
+func (c *Config) GetConnectionInfo() (bool, string) {
 	if c.GetEnvironment() == "TEST" {
 		return true, "file::memory:"
 	}
@@ -80,6 +65,12 @@ func (c *conf) GetConnectionInfo() (bool, string) {
 }
 
 // GetWebServerPort returns the web server port.
-func (c *conf) GetWebServerPort() string {
+func (c *Config) GetWebServerPort() string {
 	return c.webServerPort
+}
+
+// GetEnvironment returns the environment.
+// The environment can be DEV, TEST or PROD.
+func (c *Config) GetEnvironment() string {
+	return strings.ToUpper(c.environment)
 }
