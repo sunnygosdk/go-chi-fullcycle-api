@@ -26,13 +26,14 @@ func ValidateUpdatePassword(userPassword, newPassword string) (string, error) {
 		return "", ErrWeakPassword
 	}
 
+	err = bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(newPassword))
+	if err == nil {
+		return "", ErrSamePassword
+	}
+
 	hash, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
-	}
-
-	if userPassword == string(hash) {
-		return "", ErrSamePassword
 	}
 
 	return string(hash), nil

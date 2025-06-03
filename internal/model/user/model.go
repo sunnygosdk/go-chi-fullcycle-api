@@ -15,28 +15,28 @@ type Model struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-type CreateUserOptions struct {
+type CreateUserDTO struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-type UpdateUserOptions struct {
+type UpdateUserDTO struct {
 	Name     *string `json:"name,omitempty"`
 	Email    *string `json:"email,omitempty"`
 	Password *string `json:"password,omitempty"`
 }
 
-func ToCreate(options CreateUserOptions) (*Model, error) {
-	hash, err := ValidateCreatePassword(options.Password)
+func ToCreate(userDTO CreateUserDTO) (*Model, error) {
+	hash, err := ValidateCreatePassword(userDTO.Password)
 	if err != nil {
 		return nil, err
 	}
 
 	user := &Model{
 		ID:        entity.NewID(),
-		Name:      options.Name,
-		Email:     options.Email,
+		Name:      userDTO.Name,
+		Email:     userDTO.Email,
 		Password:  hash,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
@@ -50,9 +50,9 @@ func ToCreate(options CreateUserOptions) (*Model, error) {
 	return user, nil
 }
 
-func (user *Model) ToUpdate(options UpdateUserOptions) (*Model, error) {
-	if options.Password != nil {
-		hash, err := ValidateUpdatePassword(user.Password, *options.Password)
+func (user *Model) ToUpdate(userDTO UpdateUserDTO) (*Model, error) {
+	if userDTO.Password != nil {
+		hash, err := ValidateUpdatePassword(user.Password, *userDTO.Password)
 		if err != nil {
 			return nil, err
 		}
@@ -60,22 +60,22 @@ func (user *Model) ToUpdate(options UpdateUserOptions) (*Model, error) {
 		user.Password = hash
 	}
 
-	if options.Name != nil {
-		err := ValidateUpdateName(user.Name, *options.Name)
+	if userDTO.Name != nil {
+		err := ValidateUpdateName(user.Name, *userDTO.Name)
 		if err != nil {
 			return nil, err
 		}
 
-		user.Name = *options.Name
+		user.Name = *userDTO.Name
 	}
 
-	if options.Email != nil {
-		err := ValidateUpdateEmail(user.Email, *options.Email)
+	if userDTO.Email != nil {
+		err := ValidateUpdateEmail(user.Email, *userDTO.Email)
 		if err != nil {
 			return nil, err
 		}
 
-		user.Email = *options.Email
+		user.Email = *userDTO.Email
 	}
 
 	user.UpdatedAt = time.Now()
