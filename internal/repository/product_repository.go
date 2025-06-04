@@ -72,13 +72,13 @@ func (r *ProductRepository) GetTotalProductPages(limit int) (int, error) {
 	return (totalProducts + limit - 1) / limit, nil
 }
 
-func (r *ProductRepository) Create(product *model.ProductModel) error {
+func (r *ProductRepository) Create(product *model.ProductModel) (*model.ProductModel, error) {
 	query := "INSERT INTO products (id, name, price, created_at) VALUES (?, ?, ?, ?)"
 	_, err := r.db.Exec(query, product.ID, product.Name, product.Price, product.CreatedAt)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return product, nil
 }
 
 func (r *ProductRepository) CreateBatch(products []model.ProductModel) error {
