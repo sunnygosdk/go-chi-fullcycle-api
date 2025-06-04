@@ -1,11 +1,12 @@
 package controller
 
 import (
-	"encoding/json"
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/config"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/handler/request"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/handler/response"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/model"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/service"
 )
 
@@ -20,16 +21,18 @@ func NewProductController(service *service.ProductService) *ProductController {
 func (c *ProductController) GetProducts(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	config.Logger(ctx, config.LogInfo, "Starting GetProducts")
-	page := chi.URLParam(r, "page")
-	limit := chi.URLParam(r, "limit")
-	request := ValidateGetProductsRequest(page, limit)
+	request := request.ParseGetProductsRequest(r)
 
-	products, err := c.service.GetProducts(request.Page, request.Limit)
+	products, err := c.service.GetProducts(ctx, request)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		config.Logger(ctx, config.LogError, "GetProducts failed: %v", err)
+		response.ErrorGetProductsResponse(ctx, w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(products)
+
+	if len(products) == 0 {
+		response.SuccessGetProductsResponse(ctx, w, http.StatusOK, "No products found", []model.ProductModel{})
+		return
+	}
+
+	response.SuccessGetProductsResponse(ctx, w, http.StatusOK, "Products found", products)
 }
