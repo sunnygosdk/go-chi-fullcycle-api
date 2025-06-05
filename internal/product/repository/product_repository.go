@@ -3,7 +3,7 @@ package repository
 import (
 	"database/sql"
 
-	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/model"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/product/model"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
 )
 
