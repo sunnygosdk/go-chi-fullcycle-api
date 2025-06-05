@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/database"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/model"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/product/request"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/repository"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/helper"
 )
@@ -153,7 +154,7 @@ func TestUpdateProduct(t *testing.T) {
 	assert.NoError(t, err, "Create should return no error")
 
 	productToUpdate, _ := productCreated.ProductToUpdate(
-		model.UpdateProductDTO{
+		request.UpdateProductRequest{
 			Name:  helper.StrPtr("Product Updated"),
 			Price: helper.Float64Ptr(20),
 		})

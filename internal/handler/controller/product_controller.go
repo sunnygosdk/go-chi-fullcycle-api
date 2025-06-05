@@ -36,3 +36,21 @@ func (c *ProductController) GetProducts(w http.ResponseWriter, r *http.Request) 
 
 	response.SuccessGetProductsResponse(ctx, w, http.StatusOK, "Products found", products)
 }
+
+func (c *ProductController) CreateProduct(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	config.Logger(ctx, config.LogInfo, "Starting CreateProduct")
+	request, err := request.ParseCreateProductRequest(r)
+	if err != nil {
+		response.ErrorCreateProductResponse(ctx, w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	product, err := c.service.Create(ctx, request)
+	if err != nil {
+		response.ErrorCreateProductResponse(ctx, w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response.SuccessCreateProductResponse(ctx, w, http.StatusOK, "Product created", product)
+}

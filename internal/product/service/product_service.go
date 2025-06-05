@@ -2,11 +2,12 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/sunnygosdk/go-chi-fullcycle-api/config"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/handler/request"
-	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/model"
-	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/repository"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/product/model"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/product/repository"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
 )
 
@@ -33,7 +34,13 @@ func (s *ProductService) GetProductByID(id entity.ID) (*model.ProductModel, erro
 }
 
 func (s *ProductService) Create(ctx context.Context, product *request.CreateProductRequest) (*model.ProductModel, error) {
-	return s.repo.Create(product)
+	productModel := &model.ProductModel{
+		ID:        entity.NewID(),
+		Name:      product.Name,
+		Price:     product.Price,
+		CreatedAt: time.Now(),
+	}
+	return s.repo.Create(productModel)
 }
 
 func (s *ProductService) Update(id entity.ID, product *model.ProductModel) error {

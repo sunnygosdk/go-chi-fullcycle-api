@@ -3,6 +3,7 @@ package model
 import (
 	"time"
 
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/product/request"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
 )
 
@@ -14,12 +15,7 @@ type ProductModel struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-type UpdateProductDTO struct {
-	Name  *string  `json:"name"`
-	Price *float64 `json:"price"`
-}
-
-func (product *ProductModel) ProductToUpdate(productDTO UpdateProductDTO) (*ProductModel, error) {
+func (product *ProductModel) ProductToUpdate(productDTO request.UpdateProductRequest) (*ProductModel, error) {
 	if productDTO.Name != nil {
 		err := ValidateUpdateName(*productDTO.Name)
 		if err != nil {

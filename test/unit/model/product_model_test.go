@@ -4,12 +4,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/model"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/product/model"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/product/request"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/helper"
 )
 
 func TestToCreateProduct(t *testing.T) {
-	product, err := model.ProductToCreate(model.CreateProductDTO{
+	product, err := request.ProductToCreate(request.CreateProductRequest{
 		Name:  "Product",
 		Price: 10,
 	})
@@ -22,7 +23,7 @@ func TestToCreateProduct(t *testing.T) {
 }
 
 func TestValidateProductNameIsRequired(t *testing.T) {
-	product, err := model.ProductToCreate(model.CreateProductDTO{
+	product, err := request.ProductToCreate(request.CreateProductRequest{
 		Name:  "",
 		Price: 10,
 	})
@@ -33,7 +34,7 @@ func TestValidateProductNameIsRequired(t *testing.T) {
 }
 
 func TestValidateProductPriceIsLessOrZero(t *testing.T) {
-	product, err := model.ProductToCreate(model.CreateProductDTO{
+	product, err := request.ProductToCreate(request.CreateProductRequest{
 		Name:  "Product",
 		Price: -1,
 	})
@@ -43,14 +44,14 @@ func TestValidateProductPriceIsLessOrZero(t *testing.T) {
 }
 
 func TestToUpdateProduct(t *testing.T) {
-	product, err := model.ProductToCreate(model.CreateProductDTO{
+	product, err := request.ProductToCreate(request.CreateProductRequest{
 		Name:  "Product",
 		Price: 10,
 	})
 	assert.NoError(t, err, "ProductToCreate should return no error")
 	assert.NotNil(t, product, "ProductToCreate should return a valid product")
 
-	product, err = product.ProductToUpdate(model.UpdateProductDTO{
+	product, err = product.ProductToUpdate(request.UpdateProductRequest{
 		Name:  helper.StrPtr("Product Updated"),
 		Price: helper.Float64Ptr(20),
 	})

@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/config"
-	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/model"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/product/model"
 )
 
 type GetProductsResponse struct {
