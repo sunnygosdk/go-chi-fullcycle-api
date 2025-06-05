@@ -1,12 +1,18 @@
 package domain
 
-import "github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
+import (
+	"time"
+
+	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
+)
 
 func NewStoreDepartments(ID entity.ID, StoreID entity.ID, DepartmentID entity.ID) (*storeDepartments, error) {
 	storeDepartments := &storeDepartments{
 		ID:           ID,
 		StoreID:      StoreID,
 		DepartmentID: DepartmentID,
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
 	}
 
 	storeDepartments, err := storeDepartments.validate()
