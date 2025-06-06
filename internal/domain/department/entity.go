@@ -1,4 +1,4 @@
-package domain
+package department
 
 import (
 	"time"
@@ -6,6 +6,7 @@ import (
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
 )
 
+// department represents a department within an organization.
 type department struct {
 	ID        entity.ID
 	Name      string
