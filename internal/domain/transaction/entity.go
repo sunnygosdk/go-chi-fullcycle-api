@@ -1,4 +1,4 @@
-package employee
+package transaction
 
 import (
 	"time"
@@ -6,13 +6,12 @@ import (
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
 )
 
-type employee struct {
+// transaction represents a transaction entity.
+type transaction struct {
 	ID        entity.ID
-	Username  string
-	FirstName string
-	LastName  string
-	Email     string
-	Password  string
+	StoreID   entity.ID
+	ProductID entity.ID
+	Quantity  int
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt *time.Time

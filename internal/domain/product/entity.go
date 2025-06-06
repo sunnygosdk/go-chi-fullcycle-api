@@ -1,4 +1,4 @@
-package domain
+package product
 
 import (
 	"time"
@@ -6,6 +6,7 @@ import (
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
 )
 
+// product represents a product entity.
 type product struct {
 	ID           entity.ID
 	Name         string
