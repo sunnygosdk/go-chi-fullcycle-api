@@ -1,20 +1,21 @@
 package product
 
 import (
-	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/domain/product"
-	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/domain/entity"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/domain/repository"
 )
 
 // CreateProductUseCase is the use case for creating a product.
 type CreateProductUseCase struct {
-	productRepository product.ProductRepository
+	productRepository repository.ProductRepository
 }
 
 // CreateProductUseCaseInput is the input for creating a product.
 type CreateProductUseCaseInput struct {
 	Name         string
+	Description  string
 	Price        float64
-	DepartmentID entity.ID
+	DepartmentID string
 }
 
 // Execute creates a new product.
@@ -25,7 +26,7 @@ type CreateProductUseCaseInput struct {
 // Returns:
 //   - error: An error if the product creation fails.
 func (u *CreateProductUseCase) Execute(input *CreateProductUseCaseInput) error {
-	product, err := product.NewProduct(input.Name, input.Price, input.DepartmentID)
+	product, err := entity.NewProduct(input.Name, input.Description, input.Price, input.DepartmentID)
 	if err != nil {
 		return err
 	}

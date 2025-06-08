@@ -1,17 +1,19 @@
 package store
 
-import "github.com/sunnygosdk/go-chi-fullcycle-api/internal/domain/store"
+import (
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/domain/entity"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/domain/repository"
+)
 
 // CreateStoreUseCase is the use case for creating a store.
 type CreateStoreUseCase struct {
-	storeRepository store.StoreRepository
+	storeRepository repository.StoreRepository
 }
 
 // CreateStoreUseCaseInput is the input for creating a store.
 type CreateStoreUseCaseInput struct {
 	Name    string
 	Address string
-	Contact string
 }
 
 // Execute creates a new store.
@@ -22,7 +24,7 @@ type CreateStoreUseCaseInput struct {
 // Returns:
 //   - error: An error if the store creation fails.
 func (u *CreateStoreUseCase) Execute(input *CreateStoreUseCaseInput) error {
-	newStore, err := store.NewStore(input.Name, input.Address, input.Contact)
+	newStore, err := entity.NewStore(input.Name, input.Address)
 	if err != nil {
 		return err
 	}

@@ -1,20 +1,21 @@
 package transaction
 
 import (
-	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/domain/transaction"
-	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/domain/entity"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/domain/repository"
 )
 
 // CreateTransactionUseCase is the use case for creating a transaction.
 type CreateTransactionUseCase struct {
-	transactionRepository transaction.TransactionRepository
+	transactionRepository repository.TransactionRepository
 }
 
 // CreateTransactionUseCaseInput is the input for creating a transaction.
 type CreateTransactionUseCaseInput struct {
-	StoreID   entity.ID
-	ProductID entity.ID
 	Quantity  int
+	Type      entity.TransactionType
+	StoreID   string
+	ProductID string
 }
 
 // Execute creates a new transaction.
@@ -25,7 +26,7 @@ type CreateTransactionUseCaseInput struct {
 // Returns:
 //   - error: An error if the transaction creation fails.
 func (u *CreateTransactionUseCase) Execute(input *CreateTransactionUseCaseInput) error {
-	newTransaction, err := transaction.NewTransaction(input.StoreID, input.ProductID, input.Quantity)
+	newTransaction, err := entity.NewTransaction(input.Quantity, input.Type, input.ProductID, input.StoreID)
 	if err != nil {
 		return err
 	}
