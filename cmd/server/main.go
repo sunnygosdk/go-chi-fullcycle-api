@@ -5,7 +5,6 @@ import (
 
 	"github.com/sunnygosdk/go-chi-fullcycle-api/config"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/database"
-	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/app"
 )
 
 func main() {
@@ -16,7 +15,4 @@ func main() {
 		panic(err)
 	}
 	defer db.Close()
-
-	port := config.GetWebServerPort()
-	app.StartServer(port, db)
 }
