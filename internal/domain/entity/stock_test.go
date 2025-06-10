@@ -30,17 +30,17 @@ func TestValidateNewStock(t *testing.T) {
 	stock1, err := entity.NewStock(-1, productID.String(), storeID.String())
 	assert.Error(t, err, "NewStock should return an error")
 	assert.Nil(t, stock1, "NewStock should return a valid stock")
-	assert.Equal(t, entity.ErrorStockQuantityLessOfZero, err, "Error should be ErrorStockQuantityLessOfZero")
+	assert.ErrorIs(t, entity.ErrorStockQuantityLessOfZero, err, "Error should be ErrorStockQuantityLessOfZero")
 
 	stock2, err := entity.NewStock(10, "invalid", storeID.String())
 	assert.Error(t, err, "NewStock should return an error")
 	assert.Nil(t, stock2, "NewStock should return a valid stock")
-	assert.Equal(t, entity.ErrorStockInvalidProductID, err, "Error should be ErrorStockInvalidProductID")
+	assert.ErrorIs(t, entity.ErrorStockInvalidProductID, err, "Error should be ErrorStockInvalidProductID")
 
 	stock3, err := entity.NewStock(10, productID.String(), "invalid")
 	assert.Error(t, err, "NewStock should return an error")
 	assert.Nil(t, stock3, "NewStock should return a valid stock")
-	assert.Equal(t, entity.ErrorStockInvalidStoreID, err, "Error should be ErrorStockInvalidStoreID")
+	assert.ErrorIs(t, entity.ErrorStockInvalidStoreID, err, "Error should be ErrorStockInvalidStoreID")
 }
 
 // TestUpdateStock tests the UpdateStock function.
@@ -74,22 +74,22 @@ func TestValidateUpdateStock(t *testing.T) {
 
 	err := stock.Update(nil, nil, nil)
 	assert.Error(t, err, "UpdateStock should return an error")
-	assert.Equal(t, entity.ErrorStockAtLeastOneField, err, "Error should be ErrorStockAtLeastOneField")
+	assert.ErrorIs(t, entity.ErrorStockAtLeastOneField, err, "Error should be ErrorStockAtLeastOneField")
 
 	quantity := -1
 	err = stock.Update(&quantity, nil, nil)
 	assert.Error(t, err, "UpdateStock should return an error")
-	assert.Equal(t, entity.ErrorStockQuantityLessOfZero, err, "Error should be ErrorStockQuantityLessOfZero")
+	assert.ErrorIs(t, entity.ErrorStockQuantityLessOfZero, err, "Error should be ErrorStockQuantityLessOfZero")
 
 	invalidProductID := "invalid"
 	err = stock.Update(nil, &invalidProductID, nil)
 	assert.Error(t, err, "UpdateStock should return an error")
-	assert.Equal(t, entity.ErrorStockInvalidProductID, err, "Error should be ErrorStockInvalidProductID")
+	assert.ErrorIs(t, entity.ErrorStockInvalidProductID, err, "Error should be ErrorStockInvalidProductID")
 
 	invalidStoreID := "invalid"
 	err = stock.Update(nil, nil, &invalidStoreID)
 	assert.Error(t, err, "UpdateStock should return an error")
-	assert.Equal(t, entity.ErrorStockInvalidStoreID, err, "Error should be ErrorStockInvalidStoreID")
+	assert.ErrorIs(t, entity.ErrorStockInvalidStoreID, err, "Error should be ErrorStockInvalidStoreID")
 }
 
 // TestDeleteStock tests the DeleteStock function.
@@ -114,5 +114,5 @@ func TestValidateDeleteStock(t *testing.T) {
 
 	err := stock.Delete()
 	assert.Error(t, err, "DeleteStock should return an error")
-	assert.Equal(t, entity.ErrorStockIsDeleted, err, "Error should be ErrorStockIsDeleted")
+	assert.ErrorIs(t, entity.ErrorStockIsDeleted, err, "Error should be ErrorStockIsDeleted")
 }

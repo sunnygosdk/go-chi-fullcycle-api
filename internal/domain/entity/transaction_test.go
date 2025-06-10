@@ -32,7 +32,7 @@ func TestValidateNewTransaction(t *testing.T) {
 	transaction, err := entity.NewTransaction(0, entity.TransactionTypeIn, productID.String(), stockID.String())
 	assert.Nil(t, transaction, "ValidateNewTransaction should return no entity")
 	assert.NotNil(t, err, "ValidateNewTransaction should return an error")
-	assert.Equal(t, entity.ErrorTransactionQuantityIsZero, err, "ValidateNewTransaction should return an error")
+	assert.ErrorIs(t, entity.ErrorTransactionQuantityIsZero, err, "ValidateNewTransaction should return an error")
 }
 
 // TestUpdateTransaction tests the UpdateTransaction function.
@@ -64,19 +64,23 @@ func TestValidateUpdateTransaction(t *testing.T) {
 	stockID, _ := pkgEntity.ParseID("1")
 	transaction1, _ := entity.NewTransaction(10, entity.TransactionTypeIn, productID.String(), stockID.String())
 	err := transaction1.Update(nil, nil, nil, nil)
-	assert.Equal(t, entity.ErrorTransactionAtLeastOneField, err, "ValidateUpdateTransaction should return an error")
+	assert.NotNil(t, err, "ValidateUpdateTransaction should return an error")
+	assert.ErrorIs(t, entity.ErrorTransactionAtLeastOneField, err, "ValidateUpdateTransaction should return an error")
 
 	quantityToUpdate := 0
 	err = transaction1.Update(&quantityToUpdate, nil, nil, nil)
-	assert.Equal(t, entity.ErrorTransactionQuantityIsZero, err, "ValidateUpdateTransaction should return an error")
+	assert.NotNil(t, err, "ValidateUpdateTransaction should return an error")
+	assert.ErrorIs(t, entity.ErrorTransactionQuantityIsZero, err, "ValidateUpdateTransaction should return an error")
 
 	invalidProductID := "invalid"
 	err = transaction1.Update(nil, nil, &invalidProductID, nil)
-	assert.Equal(t, entity.ErrorTransactionInvalidProductID, err, "ValidateUpdateTransaction should return an error")
+	assert.NotNil(t, err, "ValidateUpdateTransaction should return an error")
+	assert.ErrorIs(t, entity.ErrorTransactionInvalidProductID, err, "ValidateUpdateTransaction should return an error")
 
 	invalidStockID := "invalid"
 	err = transaction1.Update(nil, nil, nil, &invalidStockID)
-	assert.Equal(t, entity.ErrorTransactionInvalidStockID, err, "ValidateUpdateTransaction should return an error")
+	assert.NotNil(t, err, "ValidateUpdateTransaction should return an error")
+	assert.ErrorIs(t, entity.ErrorTransactionInvalidStockID, err, "ValidateUpdateTransaction should return an error")
 }
 
 // TestDeleteTransaction tests the DeleteTransaction function.
@@ -101,5 +105,6 @@ func TestValidateDeleteTransaction(t *testing.T) {
 	assert.WithinDuration(t, time.Now(), *transaction.DeletedAt, 1*time.Second, "DeletedAt should be close to now")
 
 	err := transaction.Delete()
-	assert.Equal(t, entity.ErrorTransactionIsDeleted, err, "Error should be ErrorTransactionIsDeleted")
+	assert.NotNil(t, err, "ValidateDeleteTransaction should return an error")
+	assert.ErrorIs(t, entity.ErrorTransactionIsDeleted, err, "ValidateDeleteTransaction should return an error")
 }

@@ -1,19 +1,9 @@
 package entity
 
 import (
-	"errors"
 	"time"
 
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
-)
-
-// Error messages for stock validation
-var (
-	ErrorStockQuantityLessOfZero = errors.New("stock: quantity must be greater than zero")
-	ErrorStockInvalidProductID   = errors.New("stock: invalid product ID")
-	ErrorStockInvalidStoreID     = errors.New("stock: invalid store ID")
-	ErrorStockAtLeastOneField    = errors.New("stock: at least one field must be provided")
-	ErrorStockIsDeleted          = errors.New("stock: stock is already deleted")
 )
 
 // Stock represents a stock within an store.

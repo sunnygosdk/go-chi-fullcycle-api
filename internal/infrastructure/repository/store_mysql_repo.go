@@ -2,13 +2,9 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/domain/entity"
 )
-
-// Table name for the store entity.
-const tableName = "stores"
 
 // StoreMySQLRepository is the repository for the store entity.
 type StoreMySQLRepository struct {
@@ -34,11 +30,7 @@ func NewStoreMySQLRepository(db *sql.DB) StoreMySQLRepository {
 // Returns:
 //   - error: An error if the store creation fails.
 func (s *StoreMySQLRepository) Create(store *entity.Store) error {
-	query := fmt.Sprintf("INSERT INTO %s (id, name, address, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?)", tableName)
+	query := "INSERT INTO stores (id, name, address, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?)"
 	_, err := s.db.Exec(query, store.ID.String(), store.Name, store.Address, store.CreatedAt, store.UpdatedAt, store.DeletedAt)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return MapMySQLError(err)
 }

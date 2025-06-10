@@ -26,22 +26,22 @@ func TestValidateNewDepartment(t *testing.T) {
 	dep1, err := entity.NewDepartment("", "Description")
 	assert.Error(t, err, "NewDepartment should return an error")
 	assert.Nil(t, dep1, "NewDepartment should return nil")
-	assert.Equal(t, entity.ErrorDepartmentNameRequired, err)
+	assert.ErrorIs(t, entity.ErrorDepartmentNameRequired, err)
 
 	dep2, err := entity.NewDepartment("Department", "")
 	assert.Error(t, err, "NewDepartment should return an error")
 	assert.Nil(t, dep2, "NewDepartment should return nil")
-	assert.Equal(t, entity.ErrorDepartmentDescriptionRequired, err)
+	assert.ErrorIs(t, entity.ErrorDepartmentDescriptionRequired, err)
 
 	dep3, err := entity.NewDepartment("D", "Description")
 	assert.Error(t, err, "NewDepartment should return an error")
 	assert.Nil(t, dep3, "NewDepartment should return nil")
-	assert.Equal(t, entity.ErrorDepartmentNameMinLength, err)
+	assert.ErrorIs(t, entity.ErrorDepartmentNameMinLength, err)
 
 	dep4, err := entity.NewDepartment("Department", "D")
 	assert.Error(t, err, "NewDepartment should return an error")
 	assert.Nil(t, dep4, "NewDepartment should return nil")
-	assert.Equal(t, entity.ErrorDepartmentDescriptionMinLength, err)
+	assert.ErrorIs(t, entity.ErrorDepartmentDescriptionMinLength, err)
 }
 
 // TestUpdateDepartment tests the Update function.
@@ -67,17 +67,17 @@ func TestValidateUpdateDepartment(t *testing.T) {
 
 	err := department.Update(nil, nil)
 	assert.Error(t, err, "Update should return an error")
-	assert.Equal(t, entity.ErrorDepartmentAtLeastOneField, err, "Update should return an error")
+	assert.ErrorIs(t, entity.ErrorDepartmentAtLeastOneField, err, "Update should return an error")
 
 	newShortDescription := "D"
 	err = department.Update(nil, &newShortDescription)
 	assert.Error(t, err, "Update should return an error")
-	assert.Equal(t, entity.ErrorDepartmentDescriptionMinLength, err, "Update should return an error")
+	assert.ErrorIs(t, entity.ErrorDepartmentDescriptionMinLength, err, "Update should return an error")
 
 	newShortName := "D"
 	err = department.Update(&newShortName, nil)
 	assert.Error(t, err, "Update should return an error")
-	assert.Equal(t, entity.ErrorDepartmentNameMinLength, err, "Update should return an error")
+	assert.ErrorIs(t, entity.ErrorDepartmentNameMinLength, err, "Update should return an error")
 }
 
 // TestDeleteDepartment tests the Delete function.
@@ -97,5 +97,5 @@ func TestValidateDeleteDepartment(t *testing.T) {
 	assert.NotNil(t, department.DeletedAt, "DeletedAt should not be nil")
 	err := department.Delete()
 	assert.Error(t, err, "Delete should return an error")
-	assert.Equal(t, entity.ErrorDepartmentIsDeleted, err, "Delete should return an error")
+	assert.ErrorIs(t, entity.ErrorDepartmentIsDeleted, err, "Delete should return an error")
 }

@@ -1,20 +1,9 @@
 package entity
 
 import (
-	"errors"
 	"time"
 
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
-)
-
-// Error messages for department validation
-var (
-	ErrorDepartmentNameRequired         = errors.New("department: department name is required")
-	ErrorDepartmentDescriptionRequired  = errors.New("department: department description is required")
-	ErrorDepartmentNameMinLength        = errors.New("department: department name must be at least 2 characters long")
-	ErrorDepartmentDescriptionMinLength = errors.New("department: department description must be at least 2 characters long")
-	ErrorDepartmentIsDeleted            = errors.New("department: department is already deleted")
-	ErrorDepartmentAtLeastOneField      = errors.New("department: at least one field must be provided")
 )
 
 // Department represents a department within an store.

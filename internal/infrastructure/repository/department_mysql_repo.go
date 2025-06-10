@@ -32,9 +32,5 @@ func NewDepartmentMySQLRepository(db *sql.DB) DepartmentMySQLRepository {
 func (d *DepartmentMySQLRepository) Create(department *entity.Department) error {
 	query := "INSERT INTO departments (id, name, description, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?)"
 	_, err := d.db.Exec(query, department.ID.String(), department.Name, department.Description, department.CreatedAt, department.UpdatedAt, department.DeletedAt)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return MapMySQLError(err)
 }

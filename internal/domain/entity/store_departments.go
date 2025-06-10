@@ -1,17 +1,9 @@
 package entity
 
 import (
-	"errors"
 	"time"
 
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
-)
-
-var (
-	ErrorSDInvalidStoreID      = errors.New("store_departments: invalid store ID")
-	ErrorSDInvalidDepartmentID = errors.New("store_departments: invalid department ID")
-	ErrorSDIsDeleted           = errors.New("store_departments: store is already deleted")
-	ErrorSDAtLeastOneField     = errors.New("store_departments: at least one field must be provided")
 )
 
 type StoreDepartments struct {

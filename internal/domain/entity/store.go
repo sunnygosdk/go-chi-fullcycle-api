@@ -1,21 +1,9 @@
 package entity
 
 import (
-	"errors"
 	"time"
 
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
-)
-
-// Error messages for store validation
-var (
-	ErrorStoreInvalidID        = errors.New("store: invalid ID")
-	ErrorStoreIsDeleted        = errors.New("store: store is already deleted")
-	ErrorStoreInvalidName      = errors.New("store: invalid name")
-	ErrorStoreInvalidAddress   = errors.New("store: invalid address")
-	ErrorStoreMinLengthName    = errors.New("store: name must be at least 3 characters long")
-	ErrorStoreMinLengthAddress = errors.New("store: address must be at least 3 characters long")
-	ErrorStoreAtLeastOneField  = errors.New("store: at least one field must be provided")
 )
 
 // Store represents a store.

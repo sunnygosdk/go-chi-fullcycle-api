@@ -92,41 +92,50 @@ func runMigrations(db *sql.DB, t *testing.T) error {
 	statements := []string{
 		`CREATE TABLE departments (
 			id CHAR(36) PRIMARY KEY,
-			name VARCHAR(255),
-			description TEXT,
+			name VARCHAR(255) UNIQUE NOT NULL,
+			description TEXT NOT NULL,
 			created_at DATETIME,
 			updated_at DATETIME,
-			deleted_at DATETIME NULL
+			deleted_at DATETIME NULL,
+			CONSTRAINT chk_department_name_min_length CHECK (CHAR_LENGTH(name) >= 2),
+			CONSTRAINT chk_department_description_min_length CHECK (CHAR_LENGTH(description) >= 2)
 		);`,
 		`CREATE TABLE products (
 			id CHAR(36) PRIMARY KEY,
-			name VARCHAR(255),
-			description TEXT,
-			price DOUBLE,
+			name VARCHAR(255) UNIQUE NOT NULL,
+			description TEXT NOT NULL,
+			price DOUBLE NOT NULL,
 			department_id CHAR(36),
 			created_at DATETIME,
 			updated_at DATETIME,
 			deleted_at DATETIME NULL,
-			FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE CASCADE
+			FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE CASCADE,
+			CONSTRAINT chk_product_name_is_not_empty CHECK (CHAR_LENGTH(name) > 0),
+			CONSTRAINT chk_product_description_min_length CHECK (CHAR_LENGTH(description) > 2),
+			CONSTRAINT chk_product_price_is_non_negative CHECK (price >= 0)
 		);`,
 		`CREATE TABLE stores (
 			id CHAR(36) PRIMARY KEY,
-			name VARCHAR(255),
-			address TEXT,
+			name VARCHAR(255) UNIQUE NOT NULL,
+			address TEXT NOT NULL,
 			created_at DATETIME,
 			updated_at DATETIME,
-			deleted_at DATETIME NULL
+			deleted_at DATETIME NULL,
+			CONSTRAINT chk_store_name_min_length CHECK (CHAR_LENGTH(name) >= 2),
+			CONSTRAINT chk_store_address_min_length CHECK (CHAR_LENGTH(address) >= 2)
 		);`,
-		`CREATE TABLE stock (
+		`CREATE TABLE stocks (
 			id CHAR(36) PRIMARY KEY,
-			quantity INT,
+			quantity INT NOT NULL,
 			product_id CHAR(36),
 			store_id CHAR(36),
 			created_at DATETIME,
 			updated_at DATETIME,
 			deleted_at DATETIME NULL,
 			FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
-			FOREIGN KEY (store_id) REFERENCES stores(id) ON DELETE CASCADE
+			FOREIGN KEY (store_id) REFERENCES stores(id) ON DELETE CASCADE,
+			CONSTRAINT chk_stock_quantity_is_non_negative CHECK (quantity >= 0),
+			CONSTRAINT uq_stock_product_store UNIQUE (product_id, store_id)
 		);`,
 		`CREATE TABLE store_departments (
 			id CHAR(36) PRIMARY KEY,
@@ -136,19 +145,22 @@ func runMigrations(db *sql.DB, t *testing.T) error {
 			updated_at DATETIME,
 			deleted_at DATETIME NULL,
 			FOREIGN KEY (store_id) REFERENCES stores(id) ON DELETE CASCADE,
-			FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE CASCADE
+			FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE CASCADE,
+			CONSTRAINT uq_store_department UNIQUE (store_id, department_id)
 		);`,
 		`CREATE TABLE transactions (
 			id CHAR(36) PRIMARY KEY,
-			quantity INT,
-			transaction_type VARCHAR(50),
+			quantity INT NOT NULL,
+			transaction_type VARCHAR(50) NOT NULL,
 			product_id CHAR(36),
 			stock_id CHAR(36),
 			created_at DATETIME,
 			updated_at DATETIME,
 			deleted_at DATETIME NULL,
 			FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
-			FOREIGN KEY (stock_id) REFERENCES stock(id) ON DELETE CASCADE
+			FOREIGN KEY (stock_id) REFERENCES stocks(id) ON DELETE CASCADE,
+			CONSTRAINT chk_quantity_not_zero CHECK (quantity <> 0),
+			CONSTRAINT chk_transaction_type CHECK (transaction_type IN ('IN', 'OUT'))
 		);`,
 	}
 

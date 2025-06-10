@@ -1,21 +1,9 @@
 package entity
 
 import (
-	"errors"
 	"time"
 
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
-)
-
-// Error messages for product validation
-var (
-	ErrorProductNameRequired         = errors.New("product: name is required")
-	ErrorProductDescriptionRequired  = errors.New("product: description is required")
-	ErrorProductPriceLessOrZero      = errors.New("product: price must be greater than zero")
-	ErrorProductInvalidDepartmentID  = errors.New("product: invalid department ID")
-	ErrorProductIsDeleted            = errors.New("product: product is already deleted")
-	ErrorProductAtLeastOneField      = errors.New("product: at least one field must be provided")
-	ErrorProductDescriptionMinLength = errors.New("product: description must be at least 2 characters long")
 )
 
 // Product represents a product within an department.
