@@ -31,12 +31,12 @@ func TestValidateNewStoreDepartments(t *testing.T) {
 	storeDepartments1, err := entity.NewStoreDepartments(storeID.String(), "1")
 	assert.Nil(t, storeDepartments1, "ValidateNewStoreDepartments should return no entity")
 	assert.NotNil(t, err, "ValidateNewStoreDepartments should return an error")
-	assert.Equal(t, entity.ErrorSDInvalidDepartmentID, err, "ValidateNewStoreDepartments should return an error")
+	assert.ErrorIs(t, entity.ErrorSDInvalidDepartmentID, err, "ValidateNewStoreDepartments should return an error")
 
 	storeDepartments2, err := entity.NewStoreDepartments("1", departmentID.String())
 	assert.Nil(t, storeDepartments2, "ValidateNewStoreDepartments should return no entity")
 	assert.NotNil(t, err, "ValidateNewStoreDepartments should return an error")
-	assert.Equal(t, entity.ErrorSDInvalidStoreID, err, "ValidateNewStoreDepartments should return an error")
+	assert.ErrorIs(t, entity.ErrorSDInvalidStoreID, err, "ValidateNewStoreDepartments should return an error")
 }
 
 // TestUpdateStoreDepartments tests the UpdateStoreDepartments function.
@@ -65,15 +65,15 @@ func TestValidateUpdateStoreDepartments(t *testing.T) {
 	storeDepartments, _ := entity.NewStoreDepartments(storeID.String(), departmentID.String())
 
 	err := storeDepartments.Update(nil, nil)
-	assert.Equal(t, entity.ErrorSDAtLeastOneField, err, "ValidateUpdateStoreDepartments should return an error")
+	assert.ErrorIs(t, entity.ErrorSDAtLeastOneField, err, "ValidateUpdateStoreDepartments should return an error")
 
 	invalidStoreID := "invalid"
 	err = storeDepartments.Update(&invalidStoreID, nil)
-	assert.Equal(t, entity.ErrorSDInvalidStoreID, err, "ValidateUpdateStoreDepartments should return an error")
+	assert.ErrorIs(t, entity.ErrorSDInvalidStoreID, err, "ValidateUpdateStoreDepartments should return an error")
 
 	invalidDepartmentID := "invalid"
 	err = storeDepartments.Update(nil, &invalidDepartmentID)
-	assert.Equal(t, entity.ErrorSDInvalidDepartmentID, err, "ValidateUpdateStoreDepartments should return an error")
+	assert.ErrorIs(t, entity.ErrorSDInvalidDepartmentID, err, "ValidateUpdateStoreDepartments should return an error")
 }
 
 // TestDeleteStoreDepartments tests the DeleteStoreDepartments function.
@@ -101,5 +101,5 @@ func TestValidateDeleteStoreDepartments(t *testing.T) {
 
 	err := storeDepartments.Delete()
 	assert.Error(t, err, "DeleteStoreDepartments should return an error")
-	assert.Equal(t, entity.ErrorSDIsDeleted, err, "Error should be ErrorSDIsDeleted")
+	assert.ErrorIs(t, entity.ErrorSDIsDeleted, err, "Error should be ErrorSDIsDeleted")
 }

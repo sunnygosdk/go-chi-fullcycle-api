@@ -1,20 +1,9 @@
 package entity
 
 import (
-	"errors"
 	"time"
 
 	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
-)
-
-// Error messages for transaction validation
-var (
-	ErrorTransactionQuantityIsZero         = errors.New("transaction: quantity must not be zero")
-	ErrorTransactionInvalidProductID       = errors.New("transaction: invalid product ID")
-	ErrorTransactionInvalidStockID         = errors.New("transaction: invalid stock ID")
-	ErrorTransactionInvalidTransactionType = errors.New("transaction: invalid transaction type")
-	ErrorTransactionAtLeastOneField        = errors.New("transaction: at least one field must be provided")
-	ErrorTransactionIsDeleted              = errors.New("transaction: transaction is already deleted")
 )
 
 // Transaction represents a transaction within an store.
