@@ -21,7 +21,7 @@ var (
 type Transaction struct {
 	ID              entity.ID
 	Quantity        int
-	TransactionType transactionType
+	TransactionType TransactionType
 	ProductID       entity.ID
 	StockID         entity.ID
 	CreatedAt       time.Time
@@ -29,13 +29,13 @@ type Transaction struct {
 	DeletedAt       *time.Time
 }
 
-// transactionType is a type for transaction type.
-type transactionType string
+// TransactionType is a type for transaction type.
+type TransactionType string
 
 // TransactionTypes
 const (
-	TransactionTypeIn  transactionType = "IN"
-	TransactionTypeOut transactionType = "OUT"
+	TransactionTypeIn  TransactionType = "IN"
+	TransactionTypeOut TransactionType = "OUT"
 )
 
 // NewTransaction creates a new transaction instance with the provided quantity, transaction type, product ID, and stock ID.
@@ -54,7 +54,7 @@ const (
 // Returns:
 //   - *Transaction: A pointer to the newly created and validated transaction.
 //   - error: An error if the transaction validation fails.
-func NewTransaction(quantity int, transactionType transactionType, productID string, stockID string) (*Transaction, error) {
+func NewTransaction(quantity int, transactionType TransactionType, productID string, stockID string) (*Transaction, error) {
 	err := validateTransactionQuantity(quantity)
 	if err != nil {
 		return nil, err
@@ -96,7 +96,7 @@ func NewTransaction(quantity int, transactionType transactionType, productID str
 //
 // Returns:
 //   - error: An error if the transaction validation fails.
-func (t *Transaction) Update(quantity *int, transactionType *transactionType, productID *string, stockID *string) error {
+func (t *Transaction) Update(quantity *int, transactionType *TransactionType, productID *string, stockID *string) error {
 	if quantity == nil && transactionType == nil && productID == nil && stockID == nil {
 		return ErrorTransactionAtLeastOneField
 	}

@@ -1,15 +1,19 @@
 package department
 
-import "github.com/sunnygosdk/go-chi-fullcycle-api/internal/domain/department"
+import (
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/domain/entity"
+	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/domain/repository"
+)
 
 // CreateDepartmentUseCase is the use case for creating a department.
 type CreateDepartmentUseCase struct {
-	departmentRepository department.DepartmentRepository
+	departmentRepository repository.DepartmentRepository
 }
 
 // CreateDepartmentUseCaseInput is the input for creating a department.
 type CreateDepartmentUseCaseInput struct {
-	Name string
+	Name        string
+	Description string
 }
 
 // Execute creates a new department.
@@ -20,7 +24,7 @@ type CreateDepartmentUseCaseInput struct {
 // Returns:
 //   - error: An error if the department creation fails.
 func (u *CreateDepartmentUseCase) Execute(input *CreateDepartmentUseCaseInput) error {
-	newDepartment, err := department.NewDepartment(input.Name)
+	newDepartment, err := entity.NewDepartment(input.Name, input.Description)
 	if err != nil {
 		return err
 	}
