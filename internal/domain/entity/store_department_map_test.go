@@ -9,41 +9,41 @@ import (
 	pkgEntity "github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
 )
 
-// TestNewStoreDepartments tests the NewStoreDepartments function.
-func TestNewStoreDepartments(t *testing.T) {
+// TestNewStoreDepartmentMap tests the NewStoreDepartmentMap function.
+func TestNewStoreDepartmentMap(t *testing.T) {
 	storeID, _ := pkgEntity.ParseID("1")
 	departmentID, _ := pkgEntity.ParseID("1")
-	storeDepartments, err := entity.NewStoreDepartments(storeID.String(), departmentID.String())
-	assert.NoError(t, err, "NewStoreDepartments should return no error")
-	assert.NotNil(t, storeDepartments, "NewStoreDepartments should return a valid store departments")
-	assert.Equal(t, storeID, storeDepartments.StoreID, "StoreID should be 1")
-	assert.Equal(t, departmentID, storeDepartments.DepartmentID, "DepartmentID should be 1")
-	assert.WithinDuration(t, time.Now(), storeDepartments.CreatedAt, 1*time.Second, "CreatedAt should be close to now")
-	assert.WithinDuration(t, time.Now(), storeDepartments.UpdatedAt, 1*time.Second, "UpdatedAt should be close to now")
-	assert.Nil(t, storeDepartments.DeletedAt, "DeletedAt should be nil")
+	storeDepartmentMap, err := entity.NewStoreDepartmentMap(storeID.String(), departmentID.String())
+	assert.NoError(t, err, "NewStoreDepartmentMap should return no error")
+	assert.NotNil(t, storeDepartmentMap, "NewStoreDepartmentMap should return a valid store department map")
+	assert.Equal(t, storeID, storeDepartmentMap.StoreID, "StoreID should be 1")
+	assert.Equal(t, departmentID, storeDepartmentMap.DepartmentID, "DepartmentID should be 1")
+	assert.WithinDuration(t, time.Now(), storeDepartmentMap.CreatedAt, 1*time.Second, "CreatedAt should be close to now")
+	assert.WithinDuration(t, time.Now(), storeDepartmentMap.UpdatedAt, 1*time.Second, "UpdatedAt should be close to now")
+	assert.Nil(t, storeDepartmentMap.DeletedAt, "DeletedAt should be nil")
 }
 
-// TestValidateNewStoreDepartments tests the ValidateNewStoreDepartments function.
-func TestValidateNewStoreDepartments(t *testing.T) {
+// TestValidateNewStoreDepartmentMap tests the ValidateNewStoreDepartmentMap function.
+func TestValidateNewStoreDepartmentMap(t *testing.T) {
 	storeID, _ := pkgEntity.ParseID("1")
 	departmentID, _ := pkgEntity.ParseID("1")
 
-	storeDepartments1, err := entity.NewStoreDepartments(storeID.String(), "1")
-	assert.Nil(t, storeDepartments1, "ValidateNewStoreDepartments should return no entity")
-	assert.NotNil(t, err, "ValidateNewStoreDepartments should return an error")
-	assert.ErrorIs(t, entity.ErrorSDInvalidDepartmentID, err, "ValidateNewStoreDepartments should return an error")
+	storeDepartmentMap1, err := entity.NewStoreDepartmentMap(storeID.String(), "1")
+	assert.Nil(t, storeDepartmentMap1, "ValidateNewStoreDepartmentMap should return no entity")
+	assert.NotNil(t, err, "ValidateNewStoreDepartmentMap should return an error")
+	assert.ErrorIs(t, entity.ErrorSDMInvalidDepartmentID, err, "ValidateNewStoreDepartmentMap should return an error")
 
-	storeDepartments2, err := entity.NewStoreDepartments("1", departmentID.String())
-	assert.Nil(t, storeDepartments2, "ValidateNewStoreDepartments should return no entity")
-	assert.NotNil(t, err, "ValidateNewStoreDepartments should return an error")
-	assert.ErrorIs(t, entity.ErrorSDInvalidStoreID, err, "ValidateNewStoreDepartments should return an error")
+	storeDepartmentMap2, err := entity.NewStoreDepartmentMap("1", departmentID.String())
+	assert.Nil(t, storeDepartmentMap2, "ValidateNewStoreDepartmentMap should return no entity")
+	assert.NotNil(t, err, "ValidateNewStoreDepartmentMap should return an error")
+	assert.ErrorIs(t, entity.ErrorSDMInvalidStoreID, err, "ValidateNewStoreDepartmentMap should return an error")
 }
 
-// TestUpdateStoreDepartments tests the UpdateStoreDepartments function.
+// TestUpdateStoreDepartmentMap tests the UpdateStoreDepartmentMap function.
 func TestUpdateStoreDepartments(t *testing.T) {
 	storeID, _ := pkgEntity.ParseID("1")
 	departmentID, _ := pkgEntity.ParseID("1")
-	storeDepartments, _ := entity.NewStoreDepartments(storeID.String(), departmentID.String())
+	storeDepartments, _ := entity.NewStoreDepartmentMap(storeID.String(), departmentID.String())
 
 	storeID2, _ := pkgEntity.ParseID("2")
 	departmentID2, _ := pkgEntity.ParseID("2")
@@ -62,25 +62,25 @@ func TestUpdateStoreDepartments(t *testing.T) {
 func TestValidateUpdateStoreDepartments(t *testing.T) {
 	storeID, _ := pkgEntity.ParseID("1")
 	departmentID, _ := pkgEntity.ParseID("1")
-	storeDepartments, _ := entity.NewStoreDepartments(storeID.String(), departmentID.String())
+	storeDepartments, _ := entity.NewStoreDepartmentMap(storeID.String(), departmentID.String())
 
 	err := storeDepartments.Update(nil, nil)
-	assert.ErrorIs(t, entity.ErrorSDAtLeastOneField, err, "ValidateUpdateStoreDepartments should return an error")
+	assert.ErrorIs(t, entity.ErrorSDMAtLeastOneField, err, "ValidateUpdateStoreDepartments should return an error")
 
 	invalidStoreID := "invalid"
 	err = storeDepartments.Update(&invalidStoreID, nil)
-	assert.ErrorIs(t, entity.ErrorSDInvalidStoreID, err, "ValidateUpdateStoreDepartments should return an error")
+	assert.ErrorIs(t, entity.ErrorSDMInvalidStoreID, err, "ValidateUpdateStoreDepartments should return an error")
 
 	invalidDepartmentID := "invalid"
 	err = storeDepartments.Update(nil, &invalidDepartmentID)
-	assert.ErrorIs(t, entity.ErrorSDInvalidDepartmentID, err, "ValidateUpdateStoreDepartments should return an error")
+	assert.ErrorIs(t, entity.ErrorSDMInvalidDepartmentID, err, "ValidateUpdateStoreDepartments should return an error")
 }
 
 // TestDeleteStoreDepartments tests the DeleteStoreDepartments function.
 func TestDeleteStoreDepartments(t *testing.T) {
 	storeID, _ := pkgEntity.ParseID("1")
 	departmentID, _ := pkgEntity.ParseID("1")
-	storeDepartments, _ := entity.NewStoreDepartments(storeID.String(), departmentID.String())
+	storeDepartments, _ := entity.NewStoreDepartmentMap(storeID.String(), departmentID.String())
 
 	assert.Nil(t, storeDepartments.DeletedAt, "DeletedAt should be nil")
 	err := storeDepartments.Delete()
@@ -93,7 +93,7 @@ func TestDeleteStoreDepartments(t *testing.T) {
 func TestValidateDeleteStoreDepartments(t *testing.T) {
 	storeID, _ := pkgEntity.ParseID("1")
 	departmentID, _ := pkgEntity.ParseID("1")
-	storeDepartments, _ := entity.NewStoreDepartments(storeID.String(), departmentID.String())
+	storeDepartments, _ := entity.NewStoreDepartmentMap(storeID.String(), departmentID.String())
 
 	storeDepartments.Delete()
 	assert.NotNil(t, storeDepartments.DeletedAt, "DeletedAt should not be nil")
@@ -101,5 +101,5 @@ func TestValidateDeleteStoreDepartments(t *testing.T) {
 
 	err := storeDepartments.Delete()
 	assert.Error(t, err, "DeleteStoreDepartments should return an error")
-	assert.ErrorIs(t, entity.ErrorSDIsDeleted, err, "Error should be ErrorSDIsDeleted")
+	assert.ErrorIs(t, entity.ErrorSDMIsDeleted, err, "Error should be ErrorSDMIsDeleted")
 }

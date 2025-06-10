@@ -12,6 +12,7 @@ import (
 
 // TestCreateDepartmentMySQLRepository tests the CreateDepartmentMySQLRepository function
 func TestCreateDepartmentMySQLRepository(t *testing.T) {
+	truncateTables(db)
 	department, _ := entity.NewDepartment("Department 1", "Description 1")
 	repo := repository.NewDepartmentMySQLRepository(db)
 
@@ -21,6 +22,7 @@ func TestCreateDepartmentMySQLRepository(t *testing.T) {
 
 // TestCreateDepartmentMySQLRepositoryError tests the CreateDepartmentMySQLRepository function with invalid data
 func TestCreateDepartmentMySQLRepositoryError(t *testing.T) {
+	truncateTables(db)
 	repo := repository.NewDepartmentMySQLRepository(db)
 	department := &entity.Department{
 		ID:          pkgEntity.NewID(),
