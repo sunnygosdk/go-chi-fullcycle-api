@@ -17,9 +17,9 @@ type ProductMySQLRepository struct {
 //   - db: The database connection.
 //
 // Returns:
-//   - ProductMySQLRepository: The new product repository.
-func NewProductMySQLRepository(db *sql.DB) ProductMySQLRepository {
-	return ProductMySQLRepository{db: db}
+//   - *ProductMySQLRepository: The new product repository.
+func NewProductMySQLRepository(db *sql.DB) *ProductMySQLRepository {
+	return &ProductMySQLRepository{db: db}
 }
 
 // Create creates a new product.
