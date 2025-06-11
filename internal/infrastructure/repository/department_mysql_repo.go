@@ -17,9 +17,9 @@ type DepartmentMySQLRepository struct {
 //   - db: The database connection.
 //
 // Returns:
-//   - DepartmentMySQLRepository: The new department repository.
-func NewDepartmentMySQLRepository(db *sql.DB) DepartmentMySQLRepository {
-	return DepartmentMySQLRepository{db: db}
+//   - *DepartmentMySQLRepository: The new department repository.
+func NewDepartmentMySQLRepository(db *sql.DB) *DepartmentMySQLRepository {
+	return &DepartmentMySQLRepository{db: db}
 }
 
 // Create creates a new department.

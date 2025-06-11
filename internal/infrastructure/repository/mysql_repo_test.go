@@ -10,7 +10,6 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/stretchr/testify/assert"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
@@ -22,11 +21,13 @@ var teardown func()
 // TestMain is the entry point for the test suite
 func TestMain(m *testing.M) {
 	var err error
-	t := &testing.T{}
-	db, teardown = setupMySQLContainer(t)
+	db, teardown, err = setupMySQLContainer()
+	if err != nil {
+		log.Fatalf("failed to setup container: %v", err)
+	}
 	defer teardown()
 
-	err = runMigrations(db, t)
+	err = runMigrations()
 	if err != nil {
 		log.Fatalf("failed to run migrations: %v", err)
 	}
@@ -36,7 +37,7 @@ func TestMain(m *testing.M) {
 }
 
 // setupMySQLContainer sets up a MySQL container for testing
-func setupMySQLContainer(t *testing.T) (*sql.DB, func()) {
+func setupMySQLContainer() (*sql.DB, func(), error) {
 	ctx := context.Background()
 
 	req := testcontainers.ContainerRequest{
@@ -48,47 +49,59 @@ func setupMySQLContainer(t *testing.T) (*sql.DB, func()) {
 			"MYSQL_USER":          "test",
 			"MYSQL_PASSWORD":      "test",
 		},
-		WaitingFor: wait.ForLog("port 3306 MySQL Community Server - GPL"),
+		WaitingFor: wait.ForLog("ready for connections").WithStartupTimeout(60 * time.Second),
 	}
 
 	mysqlContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
 		Started:          true,
 	})
-	assert.NoError(t, err)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to setup container: %w", err)
+	}
 
 	host, err := mysqlContainer.Host(ctx)
-	assert.NoError(t, err)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to get container host: %w", err)
+	}
 
 	port, err := mysqlContainer.MappedPort(ctx, "3306")
-	assert.NoError(t, err)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to get container port: %w", err)
+	}
 
 	user := "test"
 	password := "test"
 	database := "test"
 
-	dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", user, password, host, port.Port(), database)
-	var db *sql.DB
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", user, password, host, port.Port(), database)
 
+	var db *sql.DB
+	var pingErr error
 	for i := 0; i < 10; i++ {
-		db, err = sql.Open("mysql", dns)
-		if err == nil && db.Ping() == nil {
-			break
+		db, err = sql.Open("mysql", dsn)
+		if err == nil {
+			pingErr = db.Ping()
+			if pingErr == nil {
+				break
+			}
 		}
 		time.Sleep(1 * time.Second)
 	}
-	assert.NoError(t, err)
+	if pingErr != nil {
+		return nil, nil, fmt.Errorf("failed to connect to database: %w", pingErr)
+	}
 
 	teardown := func() {
 		db.Close()
 		_ = mysqlContainer.Terminate(ctx)
 	}
 
-	return db, teardown
+	return db, teardown, nil
 }
 
 // runMigrations runs the database migrations
-func runMigrations(db *sql.DB, t *testing.T) error {
+func runMigrations() error {
 	statements := []string{
 		`CREATE TABLE departments (
 			id CHAR(36) PRIMARY KEY,
@@ -137,7 +150,7 @@ func runMigrations(db *sql.DB, t *testing.T) error {
 			CONSTRAINT chk_stock_quantity_is_non_negative CHECK (quantity >= 0),
 			CONSTRAINT uq_stock_product_store UNIQUE (product_id, store_id)
 		);`,
-		`CREATE TABLE store_departments (
+		`CREATE TABLE store_department_map (
 			id CHAR(36) PRIMARY KEY,
 			store_id CHAR(36),
 			department_id CHAR(36),
@@ -166,9 +179,29 @@ func runMigrations(db *sql.DB, t *testing.T) error {
 
 	for i, stmt := range statements {
 		_, err := db.Exec(stmt)
-		assert.NoError(t, err)
 		if err != nil {
 			return fmt.Errorf("error on migration %d: %w", i+1, err)
+		}
+	}
+	return nil
+}
+
+func truncateTables(db *sql.DB) error {
+	statements := []string{
+		`SET FOREIGN_KEY_CHECKS = 0;`,
+		`TRUNCATE TABLE departments;`,
+		`TRUNCATE TABLE products;`,
+		`TRUNCATE TABLE stores;`,
+		`TRUNCATE TABLE stocks;`,
+		`TRUNCATE TABLE store_department_map;`,
+		`TRUNCATE TABLE transactions;`,
+		`SET FOREIGN_KEY_CHECKS = 1;`,
+	}
+
+	for i, stmt := range statements {
+		_, err := db.Exec(stmt)
+		if err != nil {
+			return fmt.Errorf("error on truncate %d: %w", i+1, err)
 		}
 	}
 	return nil

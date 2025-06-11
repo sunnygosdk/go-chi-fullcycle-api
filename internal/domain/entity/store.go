@@ -16,12 +16,11 @@ type Store struct {
 	DeletedAt *time.Time
 }
 
-// NewStore creates a new store instance with the provided ID, name, and address.
-// It initializes the store with the given ID, name, and address,
+// NewStore creates a new store instance with the provided name and address.
+// It initializes the store with the given name and address,
 // and sets the creation and update timestamps to the current time.
 //
 // Parameters:
-//   - id: ID of the store.
 //   - name: Name of the store.
 //   - address: Address of the store.
 //

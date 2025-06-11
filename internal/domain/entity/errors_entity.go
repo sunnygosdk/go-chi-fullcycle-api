@@ -32,12 +32,12 @@ var (
 	ErrorStockIsDeleted          = errors.New("stock: stock is already deleted")
 )
 
-// Error messages for store_departments validation
+// Error messages for store_department_map validation
 var (
-	ErrorSDInvalidStoreID      = errors.New("store_departments: invalid store ID")
-	ErrorSDInvalidDepartmentID = errors.New("store_departments: invalid department ID")
-	ErrorSDIsDeleted           = errors.New("store_departments: store is already deleted")
-	ErrorSDAtLeastOneField     = errors.New("store_departments: at least one field must be provided")
+	ErrorSDMInvalidStoreID      = errors.New("store_department_map: invalid store ID")
+	ErrorSDMInvalidDepartmentID = errors.New("store_department_map: invalid department ID")
+	ErrorSDMIsDeleted           = errors.New("store_department_map: store is already deleted")
+	ErrorSDMAtLeastOneField     = errors.New("store_department_map: at least one field must be provided")
 )
 
 // Error messages for store validation

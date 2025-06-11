@@ -17,9 +17,9 @@ type StoreMySQLRepository struct {
 //   - db: The database connection.
 //
 // Returns:
-//   - StoreMySQLRepository: The new store repository.
-func NewStoreMySQLRepository(db *sql.DB) StoreMySQLRepository {
-	return StoreMySQLRepository{db: db}
+//   - *StoreMySQLRepository: The new store repository.
+func NewStoreMySQLRepository(db *sql.DB) *StoreMySQLRepository {
+	return &StoreMySQLRepository{db: db}
 }
 
 // Create creates a new store.
