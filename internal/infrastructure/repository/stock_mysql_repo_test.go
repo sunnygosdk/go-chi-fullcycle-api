@@ -12,6 +12,8 @@ import (
 // TestCreateStockMySQLRepository tests the CreateStockMySQLRepository function
 func TestCreateStockMySQLRepository(t *testing.T) {
 	truncateTables(db)
+
+	t.Log("TestCreateStockMySQLRepository")
 	productRepo := repository.NewProductMySQLRepository(db)
 	departmentRepo := repository.NewDepartmentMySQLRepository(db)
 	department := fixtures.CreateDepartmentFixture(t, departmentRepo)
@@ -22,6 +24,8 @@ func TestCreateStockMySQLRepository(t *testing.T) {
 	stock, _ := entity.NewStock(10, product.ID.String(), store.ID.String())
 	repo := repository.NewStockMySQLRepository(db)
 
+	t.Log("Starting Stock Repository Test - Create function")
 	err := repo.Create(stock)
 	assert.NoError(t, err, "CreateStockMySQLRepository should return no error")
+	t.Log("Finished Stock Repository Test - Create function")
 }

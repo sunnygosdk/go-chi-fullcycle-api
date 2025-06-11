@@ -17,6 +17,7 @@ import (
 // Returns:
 //   - *entity.Store: The created store.
 func CreateStoreFixture(t *testing.T, repo repository.StoreRepository) *entity.Store {
+	t.Log("Creating Store Fixture")
 	store, err := entity.NewStore("Fixture Store", "Fixture Store Address")
 	assert.NoError(t, err, "Error creating store fixture")
 

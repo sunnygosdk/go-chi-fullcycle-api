@@ -20,6 +20,7 @@ import (
 // Returns:
 //   - *entity.StoreDepartmentMap: The created store department map.
 func CreateStoreDepartmentMapFixture(t *testing.T, repo repository.StoreDepartmentMapRepository, storeID pkgEntity.ID, departmentID pkgEntity.ID) *entity.StoreDepartmentMap {
+	t.Log("Creating Store Department Map Fixture")
 	storeDepartmentMap, err := entity.NewStoreDepartmentMap(storeID.String(), departmentID.String())
 	assert.NoError(t, err, "Error creating store department map fixture")
 

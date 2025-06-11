@@ -17,6 +17,7 @@ import (
 // Returns:
 //   - *entity.Department: The created department.
 func CreateDepartmentFixture(t *testing.T, repo repository.DepartmentRepository) *entity.Department {
+	t.Log("Creating Department Fixture")
 	department, err := entity.NewDepartment("Fixture Department", "Fixture Department Description")
 	assert.NoError(t, err, "Error creating department fixture")
 

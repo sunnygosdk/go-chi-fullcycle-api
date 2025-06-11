@@ -49,7 +49,7 @@ func setupMySQLContainer() (*sql.DB, func(), error) {
 			"MYSQL_USER":          "test",
 			"MYSQL_PASSWORD":      "test",
 		},
-		WaitingFor: wait.ForLog("port 3306 MySQL Community Server - GPL"),
+		WaitingFor: wait.ForLog("ready for connections").WithStartupTimeout(60 * time.Second),
 	}
 
 	mysqlContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
@@ -74,18 +74,22 @@ func setupMySQLContainer() (*sql.DB, func(), error) {
 	password := "test"
 	database := "test"
 
-	dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", user, password, host, port.Port(), database)
-	var db *sql.DB
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", user, password, host, port.Port(), database)
 
+	var db *sql.DB
+	var pingErr error
 	for i := 0; i < 10; i++ {
-		db, err = sql.Open("mysql", dns)
-		if err == nil && db.Ping() == nil {
-			break
+		db, err = sql.Open("mysql", dsn)
+		if err == nil {
+			pingErr = db.Ping()
+			if pingErr == nil {
+				break
+			}
 		}
 		time.Sleep(1 * time.Second)
 	}
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to connect to database: %w", err)
+	if pingErr != nil {
+		return nil, nil, fmt.Errorf("failed to connect to database: %w", pingErr)
 	}
 
 	teardown := func() {

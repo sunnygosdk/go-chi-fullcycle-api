@@ -19,6 +19,7 @@ import (
 // Returns:
 //   - *entity.Product: The created product.
 func CreateProductFixture(t *testing.T, repo repository.ProductRepository, departmentID pkgEntity.ID) *entity.Product {
+	t.Log("Creating Product Fixture")
 	product, err := entity.NewProduct("Fixture Product", "Fixture Product Description", 100.0, departmentID.String())
 	assert.NoError(t, err, "Error creating product fixture")
 

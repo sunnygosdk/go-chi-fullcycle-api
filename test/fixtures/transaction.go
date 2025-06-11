@@ -20,6 +20,7 @@ import (
 // Returns:
 //   - *entity.Transaction: The created transaction.
 func CreateTransactionInFixture(t *testing.T, repo repository.TransactionRepository, productID pkgEntity.ID, stockID pkgEntity.ID) *entity.Transaction {
+	t.Log("Creating Transaction Fixture")
 	transaction, err := entity.NewTransaction(10, entity.TransactionTypeIn, productID.String(), stockID.String())
 	assert.NoError(t, err, "Error creating transaction fixture")
 
