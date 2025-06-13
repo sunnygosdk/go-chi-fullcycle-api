@@ -11,7 +11,6 @@ type Transaction struct {
 	ID              entity.ID
 	Quantity        int
 	TransactionType TransactionType
-	ProductID       entity.ID
 	StockID         entity.ID
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
@@ -37,21 +36,15 @@ const (
 // Parameters:
 //   - quantity: Quantity of the transaction.
 //   - transactionType: Transaction type of the transaction.
-//   - productID: Product ID of the transaction.
 //   - stockID: Stock ID of the transaction.
 //
 // Returns:
 //   - *Transaction: A pointer to the newly created and validated transaction.
 //   - error: An error if the transaction validation fails.
-func NewTransaction(quantity int, transactionType TransactionType, productID string, stockID string) (*Transaction, error) {
+func NewTransaction(quantity int, transactionType TransactionType, stockID string) (*Transaction, error) {
 	err := validateTransactionQuantity(quantity)
 	if err != nil {
 		return nil, err
-	}
-
-	prodID, err := entity.ParseID(productID)
-	if err != nil {
-		return nil, ErrorTransactionInvalidProductID
 	}
 
 	stoID, err := entity.ParseID(stockID)
@@ -63,7 +56,6 @@ func NewTransaction(quantity int, transactionType TransactionType, productID str
 		ID:              entity.NewID(),
 		Quantity:        quantity,
 		TransactionType: transactionType,
-		ProductID:       prodID,
 		StockID:         stoID,
 		CreatedAt:       time.Now(),
 		UpdatedAt:       time.Now(),
@@ -80,13 +72,12 @@ func NewTransaction(quantity int, transactionType TransactionType, productID str
 // Parameters:
 //   - quantity: Quantity of the transaction.
 //   - transactionType: Transaction type of the transaction.
-//   - productID: Product ID of the transaction.
 //   - stockID: Stock ID of the transaction.
 //
 // Returns:
 //   - error: An error if the transaction validation fails.
-func (t *Transaction) Update(quantity *int, transactionType *TransactionType, productID *string, stockID *string) error {
-	if quantity == nil && transactionType == nil && productID == nil && stockID == nil {
+func (t *Transaction) Update(quantity *int, transactionType *TransactionType, stockID *string) error {
+	if quantity == nil && transactionType == nil && stockID == nil {
 		return ErrorTransactionAtLeastOneField
 	}
 
@@ -100,14 +91,6 @@ func (t *Transaction) Update(quantity *int, transactionType *TransactionType, pr
 
 	if transactionType != nil {
 		t.TransactionType = *transactionType
-	}
-
-	if productID != nil {
-		prodID, err := entity.ParseID(*productID)
-		if err != nil {
-			return ErrorTransactionInvalidProductID
-		}
-		t.ProductID = prodID
 	}
 
 	if stockID != nil {

@@ -2,17 +2,15 @@ package entity
 
 import (
 	"time"
-
-	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
 )
 
 // Product represents a product within an department.
 type Product struct {
-	ID           entity.ID
+	ID           ID
 	Name         string
 	Description  string
 	Price        float64
-	DepartmentID entity.ID
+	DepartmentID ID
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	DeletedAt    *time.Time
@@ -47,13 +45,13 @@ func NewProduct(name string, description string, price float64, departmentID str
 		return nil, err
 	}
 
-	depID, err := entity.ParseID(departmentID)
+	depID, err := ValidateEntityID(departmentID)
 	if err != nil {
 		return nil, ErrorProductInvalidDepartmentID
 	}
 
 	product := &Product{
-		ID:           entity.NewID(),
+		ID:           NewID(),
 		Name:         name,
 		Description:  description,
 		Price:        price,
@@ -111,7 +109,7 @@ func (p *Product) Update(name *string, description *string, price *float64, depa
 	}
 
 	if departmentID != nil {
-		depID, err := entity.ParseID(*departmentID)
+		depID, err := ValidateEntityID(*departmentID)
 		if err != nil {
 			return ErrorProductInvalidDepartmentID
 		}

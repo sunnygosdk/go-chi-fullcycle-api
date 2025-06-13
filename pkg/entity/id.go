@@ -15,3 +15,8 @@ func ParseID(s string) (ID, error) {
 	id, err := uuid.Parse(s)
 	return ID(id), err
 }
+
+// InvalidID returns an invalid ID.
+func InvalidID() ID {
+	return ID(uuid.Nil)
+}

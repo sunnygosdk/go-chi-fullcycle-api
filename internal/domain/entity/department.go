@@ -2,13 +2,11 @@ package entity
 
 import (
 	"time"
-
-	"github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
 )
 
 // Department represents a department within an store.
 type Department struct {
-	ID          entity.ID
+	ID          ID
 	Name        string
 	Description string
 	CreatedAt   time.Time
@@ -42,7 +40,7 @@ func NewDepartment(name string, description string) (*Department, error) {
 	}
 
 	department := &Department{
-		ID:          entity.NewID(),
+		ID:          NewID(),
 		Name:        name,
 		Description: description,
 		CreatedAt:   time.Now(),
