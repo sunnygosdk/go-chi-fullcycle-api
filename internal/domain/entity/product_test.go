@@ -6,12 +6,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/sunnygosdk/go-chi-fullcycle-api/internal/domain/entity"
-	pkgEntity "github.com/sunnygosdk/go-chi-fullcycle-api/pkg/entity"
 )
 
 // TestNewProduct tests the NewProduct function.
 func TestNewProduct(t *testing.T) {
-	departmentID, _ := pkgEntity.ParseID("1")
+	departmentID := entity.NewID()
 	product, err := entity.NewProduct("Product", "Description", 10, departmentID.String())
 	assert.NoError(t, err, "NewProduct should return no error")
 	assert.NotNil(t, product, "NewProduct should return a valid product")
@@ -26,7 +25,7 @@ func TestNewProduct(t *testing.T) {
 
 // TestValidateNewProduct tests the NewProduct function validation.
 func TestValidateNewProduct(t *testing.T) {
-	departmentID, _ := pkgEntity.ParseID("1")
+	departmentID := entity.NewID()
 	product, err := entity.NewProduct("", "Description", 10, departmentID.String())
 	assert.Error(t, err, "NewProduct should return an error")
 	assert.Nil(t, product, "NewProduct should return nil")
@@ -51,12 +50,12 @@ func TestValidateNewProduct(t *testing.T) {
 
 // TestUpdateProduct tests the Update function.
 func TestUpdateProduct(t *testing.T) {
-	departmentID, _ := pkgEntity.ParseID("1")
+	departmentID := entity.NewID()
 	product, _ := entity.NewProduct("Product", "Description", 10, departmentID.String())
 	product.Name = "Product Updated"
 	product.Description = "Description Updated"
 	product.Price = 20
-	depIDUpdated, _ := pkgEntity.ParseID("2")
+	depIDUpdated := entity.NewID()
 	departmentIDUpdated := depIDUpdated.String()
 	createdAt := product.CreatedAt
 	err := product.Update(&product.Name, &product.Description, &product.Price, &departmentIDUpdated)
@@ -72,7 +71,7 @@ func TestUpdateProduct(t *testing.T) {
 
 // TestValidateUpdateProduct tests the Update function validation.
 func TestValidateUpdateProduct(t *testing.T) {
-	departmentID, _ := pkgEntity.ParseID("1")
+	departmentID := entity.NewID()
 	prod1, _ := entity.NewProduct("Product", "Description", 10, departmentID.String())
 	err := prod1.Update(nil, nil, nil, nil)
 	assert.Error(t, err, "Update should return an error")
@@ -111,7 +110,7 @@ func TestValidateUpdateProduct(t *testing.T) {
 
 // TestDeleteProduct tests the Delete function.
 func TestDeleteProduct(t *testing.T) {
-	departmentID, _ := pkgEntity.ParseID("1")
+	departmentID := entity.NewID()
 	product, _ := entity.NewProduct("Product", "Description", 10, departmentID.String())
 	assert.Nil(t, product.DeletedAt, "DeletedAt should be nil")
 	err := product.Delete()
@@ -122,7 +121,7 @@ func TestDeleteProduct(t *testing.T) {
 
 // TestValidateDeleteProduct tests the Delete function validation.
 func TestValidateDeleteProduct(t *testing.T) {
-	departmentID, _ := pkgEntity.ParseID("1")
+	departmentID := entity.NewID()
 	product, _ := entity.NewProduct("Product", "Description", 10, departmentID.String())
 	assert.Nil(t, product.DeletedAt, "DeletedAt should be nil")
 	product.Delete()

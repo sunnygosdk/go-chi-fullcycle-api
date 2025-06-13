@@ -2,6 +2,11 @@ package entity
 
 import "errors"
 
+// Generic error messages
+var (
+	ErrorEntityInvalidID = errors.New("invalid ID")
+)
+
 // Error messages for department validation
 var (
 	ErrorDepartmentNameRequired         = errors.New("department: department name is required")
@@ -25,6 +30,7 @@ var (
 
 // Error messages for stock validation
 var (
+	ErrorStockInvalidID          = errors.New("stock: invalid ID")
 	ErrorStockQuantityLessOfZero = errors.New("stock: quantity must be greater than zero")
 	ErrorStockInvalidProductID   = errors.New("stock: invalid product ID")
 	ErrorStockInvalidStoreID     = errors.New("stock: invalid store ID")
@@ -54,7 +60,6 @@ var (
 // Error messages for transaction validation
 var (
 	ErrorTransactionQuantityIsZero         = errors.New("transaction: quantity must not be zero")
-	ErrorTransactionInvalidProductID       = errors.New("transaction: invalid product ID")
 	ErrorTransactionInvalidStockID         = errors.New("transaction: invalid stock ID")
 	ErrorTransactionInvalidTransactionType = errors.New("transaction: invalid transaction type")
 	ErrorTransactionAtLeastOneField        = errors.New("transaction: at least one field must be provided")

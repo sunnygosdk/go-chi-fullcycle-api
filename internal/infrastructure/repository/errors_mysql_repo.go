@@ -1,21 +1,9 @@
 package repository
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/go-sql-driver/mysql"
-)
-
-// Error messages for MySQL errors
-var (
-	ErrorMySQLDuplicateEntry          = errors.New("mysql duplicate entry error")
-	ErrorMySQLFieldNotNull            = errors.New("mysql field not null error")
-	ErrorMySQLUnknown                 = errors.New("mysql unknown error")
-	ErrorMySQLInvalidType             = errors.New("mysql invalid type error")
-	ErrorMySQLForeignKeyConstraint    = errors.New("mysql foreign key constraint error")
-	ErrorMySQLForeignKeyMissing       = errors.New("mysql foreign key missing error")
-	ErrorMySQLCheckConstraintViolated = errors.New("mysql check constraint violated error")
 )
 
 // MySQLError is a wrapper for MySQL errors
@@ -65,18 +53,18 @@ func MapMySQLError(err error) error {
 func (e *MySQLError) getError() error {
 	switch e.Number {
 	case 1062:
-		return fmt.Errorf("%w: %v", ErrorMySQLDuplicateEntry, e.Message)
+		return fmt.Errorf("%w: %v", ErrorRepoDuplicateEntry, e.Message)
 	case 1048:
-		return fmt.Errorf("%w: %v", ErrorMySQLFieldNotNull, e.Message)
+		return fmt.Errorf("%w: %v", ErrorRepoFieldNotNull, e.Message)
 	case 1265:
-		return fmt.Errorf("%w: %v", ErrorMySQLInvalidType, e.Message)
+		return fmt.Errorf("%w: %v", ErrorRepoInvalidType, e.Message)
 	case 1451:
-		return fmt.Errorf("%w: %v", ErrorMySQLForeignKeyConstraint, e.Message)
+		return fmt.Errorf("%w: %v", ErrorRepoForeignKeyConstraint, e.Message)
 	case 1452:
-		return fmt.Errorf("%w: %v", ErrorMySQLForeignKeyMissing, e.Message)
+		return fmt.Errorf("%w: %v", ErrorRepoForeignKeyMissing, e.Message)
 	case 3819:
-		return fmt.Errorf("%w: %v", ErrorMySQLCheckConstraintViolated, e.Message)
+		return fmt.Errorf("%w: %v", ErrorRepoCheckConstraintViolated, e.Message)
 	default:
-		return fmt.Errorf("%w: %v", ErrorMySQLUnknown, e.Message)
+		return fmt.Errorf("%w: %v", ErrorRepoUnknown, e.Message)
 	}
 }

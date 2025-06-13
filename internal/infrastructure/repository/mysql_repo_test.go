@@ -165,12 +165,10 @@ func runMigrations() error {
 			id CHAR(36) PRIMARY KEY,
 			quantity INT NOT NULL,
 			transaction_type VARCHAR(50) NOT NULL,
-			product_id CHAR(36),
 			stock_id CHAR(36),
 			created_at DATETIME,
 			updated_at DATETIME,
 			deleted_at DATETIME NULL,
-			FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
 			FOREIGN KEY (stock_id) REFERENCES stocks(id) ON DELETE CASCADE,
 			CONSTRAINT chk_quantity_not_zero CHECK (quantity <> 0),
 			CONSTRAINT chk_transaction_type CHECK (transaction_type IN ('IN', 'OUT'))

@@ -30,7 +30,7 @@ func NewTransactionMySQLRepository(db *sql.DB) *TransactionMySQLRepository {
 // Returns:
 //   - error: An error if the transaction creation fails.
 func (s *TransactionMySQLRepository) Create(transaction *entity.Transaction) error {
-	query := "INSERT INTO transactions (id, quantity, transaction_type, product_id, stock_id, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-	_, err := s.db.Exec(query, transaction.ID.String(), transaction.Quantity, transaction.TransactionType, transaction.ProductID.String(), transaction.StockID.String(), transaction.CreatedAt, transaction.UpdatedAt, transaction.DeletedAt)
+	query := "INSERT INTO transactions (id, quantity, transaction_type, stock_id, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+	_, err := s.db.Exec(query, transaction.ID.String(), transaction.Quantity, transaction.TransactionType, transaction.StockID.String(), transaction.CreatedAt, transaction.UpdatedAt, transaction.DeletedAt)
 	return MapMySQLError(err)
 }

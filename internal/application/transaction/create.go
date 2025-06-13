@@ -8,14 +8,14 @@ import (
 // CreateTransactionUseCase is the use case for creating a transaction.
 type CreateTransactionUseCase struct {
 	transactionRepository repository.TransactionRepository
+	stockRepository       repository.StockRepository
 }
 
 // CreateTransactionUseCaseInput is the input for creating a transaction.
 type CreateTransactionUseCaseInput struct {
-	Quantity  int
-	Type      entity.TransactionType
-	StoreID   string
-	ProductID string
+	Quantity int
+	Type     entity.TransactionType
+	StockID  string
 }
 
 // Execute creates a new transaction.
@@ -26,9 +26,21 @@ type CreateTransactionUseCaseInput struct {
 // Returns:
 //   - error: An error if the transaction creation fails.
 func (u *CreateTransactionUseCase) Execute(input *CreateTransactionUseCaseInput) error {
-	newTransaction, err := entity.NewTransaction(input.Quantity, input.Type, input.ProductID, input.StoreID)
+	newTransaction, err := entity.NewTransaction(input.Quantity, input.Type, input.StockID)
 	if err != nil {
 		return err
 	}
+
+	if newTransaction.TransactionType == entity.TransactionTypeOut {
+		stockValidated, err := entity.NewStockWithID(input.StockID)
+		if err != nil {
+			return err
+		}
+		err = u.stockRepository.Update(stockValidated)
+		if err != nil {
+			return err
+		}
+	}
+
 	return u.transactionRepository.Create(newTransaction)
 }
